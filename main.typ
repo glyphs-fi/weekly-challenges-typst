@@ -126,6 +126,7 @@
 #let showcase-date = cmd-line-override("showcase-date", showcase-date, fn: parse-date)
 
 #let announcement-glyph = cmd-line-override("announcement-glyph", announcement-glyph)
+#let showcase-glyph = cmd-line-override("showcase-glyph", showcase-glyph)
 #let glyph-winner-first = cmd-line-override("glyph-winner-first", glyph-winner-first)
 #let glyph-winner-second = cmd-line-override("glyph-winner-second", glyph-winner-second)
 #let glyph-winner-third = cmd-line-override("glyph-winner-third", glyph-winner-third)
