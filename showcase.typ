@@ -10,7 +10,7 @@
   showcase-width: 18cm,
   num-cols: 3,
   aspect-ratio: 1,
-  path-template: "images/Glyph_X.png",
+  path-template: "Glyph_X.png",
   title-text: "Weekly Glyph Challenge",
   pangram-font-size: 14.5pt,
   rectangular-badge: false,
@@ -25,7 +25,7 @@
   showcase-width: 22cm,
   num-cols: 3,
   aspect-ratio: 1.5,
-  path-template: "images/Ambi_X.png",
+  path-template: "Ambi_X.png",
   title-text: "Weekly Ambigram Challenge",
   pangram-font-size: 14.5pt,
   rectangular-badge: true,
@@ -39,10 +39,11 @@
 
 
 //produces a grid of framed images together with their labels and a background rectangle
-#let generate-image-grid(grid-width, config) = {
+#let generate-image-grid(grid-width, config, image-dir) = {
+  let full-path-template = image-dir + "/" + config.path-template
   //somewhat hacky code for finding number of submissions, needs to live in its own context for reasons
   context {
-    helpers.number-of-submissions(config.path-template)
+    helpers.number-of-submissions(full-path-template)
   }
   context {
     let num-items = helpers.number-of-submissions-return.get()
@@ -70,7 +71,7 @@
 
       for col in range(items-in-row) {
         let item-num = (row * num-cols) + col + 1 //1-indexed
-        let path = helpers.get-path(config.path-template, item-num)
+        let path = helpers.get-path(full-path-template, item-num)
         let path-label = label(path)
 
         let img = image(path)
@@ -351,7 +352,7 @@
 
 
 //produces a full showcase complete with banner, image grid and background
-#let generate-showcase(badge-text-str, start-date, config) = context {
+#let generate-showcase(badge-text-str, start-date, config, image-dir) = context {
   let rectangular-badge = config.rectangular-badge
   let showcase-width = config.showcase-width
 
@@ -365,6 +366,7 @@
   let image-grid = generate-image-grid(
     showcase-width - 2 * side-margin,
     config,
+    image-dir,
   )
 
   //construct foreground (banner + image grid with spacing in between), storing for later
@@ -403,13 +405,13 @@
 
 
 //produces glyph showcase
-#let generate-glyph-showcase(glyph, weeknum, start-date) = {
+#let generate-glyph-showcase(glyph, weeknum, start-date, image-dir) = {
   let config = glyph-showcase-config
   config += (primary-colour: palette.this-week-fg(weeknum))
-  generate-showcase(glyph, start-date, config)
+  generate-showcase(glyph, start-date, config, image-dir)
 }
 
 //produces ambigram showcase
-#let generate-ambi-showcase(ambi, start-date) = {
-  generate-showcase(ambi, start-date, ambi-showcase-config)
+#let generate-ambi-showcase(ambi, start-date, image-dir) = {
+  generate-showcase(ambi, start-date, ambi-showcase-config, image-dir)
 }

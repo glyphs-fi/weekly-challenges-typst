@@ -78,6 +78,8 @@
 #let showcase-date = current-date - duration(days: 7)
 //#let showcase-date = datetime(year: 2069, month: 4, day: 13)
 
+//directory to search for images
+#let image-dir = "images"
 
 
 //////////////////END OF USER AREA////////////////////
@@ -124,6 +126,7 @@
 #let current-week = cmd-line-override("current-week", current-week, fn: eval)
 #let current-date = cmd-line-override("current-date", current-date, fn: parse-date)
 #let showcase-date = cmd-line-override("showcase-date", showcase-date, fn: parse-date)
+#let image-dir = cmd-line-override("image-dir", image-dir)
 
 #let announcement-glyph = cmd-line-override("announcement-glyph", announcement-glyph)
 #let showcase-glyph = cmd-line-override("showcase-glyph", showcase-glyph)
@@ -160,23 +163,23 @@
     if type == "glyph-announcement" {
       announcement.generate-glyph-announcement(announcement-glyph, current-week, current-date)
     } else if type == "glyph-showcase" {
-      showcase.generate-glyph-showcase(showcase-glyph, current-week - 1, showcase-date)
+      showcase.generate-glyph-showcase(showcase-glyph, current-week - 1, showcase-date, image-dir)
     } else if type == "glyph-first" {
-      hall-of-fame.generate-glyph-winner-display(current-week - 2, glyph-winner-first, 1)
+      hall-of-fame.generate-glyph-winner-display(current-week - 2, glyph-winner-first, 1, image-dir)
     } else if type == "glyph-second" {
-      hall-of-fame.generate-glyph-winner-display(current-week - 2, glyph-winner-second, 2)
+      hall-of-fame.generate-glyph-winner-display(current-week - 2, glyph-winner-second, 2, image-dir)
     } else if type == "glyph-third" {
-      hall-of-fame.generate-glyph-winner-display(current-week - 2, glyph-winner-third, 3)
+      hall-of-fame.generate-glyph-winner-display(current-week - 2, glyph-winner-third, 3, image-dir)
     } else if type == "ambigram-announcement" {
       announcement.generate-ambi-announcement(announcement-ambi, current-date)
     } else if type == "ambigram-showcase" {
-      showcase.generate-ambi-showcase(showcase-ambi, showcase-date)
+      showcase.generate-ambi-showcase(showcase-ambi, showcase-date, image-dir)
     } else if type == "ambigram-first" {
-      hall-of-fame.generate-ambi-winner-display(current-week - 2, ambi-winner-first, 1)
+      hall-of-fame.generate-ambi-winner-display(current-week - 2, ambi-winner-first, 1, image-dir)
     } else if type == "ambigram-second" {
-      hall-of-fame.generate-ambi-winner-display(current-week - 2, ambi-winner-second, 2)
+      hall-of-fame.generate-ambi-winner-display(current-week - 2, ambi-winner-second, 2, image-dir)
     } else if type == "ambigram-third" {
-      hall-of-fame.generate-ambi-winner-display(current-week - 2, ambi-winner-third, 3)
+      hall-of-fame.generate-ambi-winner-display(current-week - 2, ambi-winner-third, 3, image-dir)
     } else {
       panic("invalid output type in `to-generate`")
     },

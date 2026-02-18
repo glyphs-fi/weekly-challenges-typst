@@ -141,10 +141,8 @@
           showcase.generate-image-grid(
             16cm,
             if (challenge == "Glyph") { showcase.glyph-showcase-config } else { showcase.ambi-showcase-config }
-              + (
-                path-template: "sample_images/" + challenge + "_X.png",
-                ..if challenge == "Glyph" { (primary-colour: glyph-primary) },
-              ),
+              + if challenge == "Glyph" { (primary-colour: glyph-primary) },
+            "sample_images",
           ),
         ),
       )
@@ -162,12 +160,12 @@
           align(
             center,
             box(hall-of-fame.generate-winner-display(
-              "sample_images/" + challenge + "WinnerX.png",
+              challenge + "WinnerX.png",
               display-width,
               0,
               winner-name,
               pos,
-              pfp-dir: "sample_images/pfp",
+              "sample_images",
             )),
           ),
         )

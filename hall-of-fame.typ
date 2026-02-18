@@ -34,8 +34,8 @@
 }
 
 //generates a hall of fame image. submission is found using `path-template` (which should be something like `images/GlyphWinnerX"; X is replaced with First, Second, Third). `week-num` is the week num of the challenge, not of the week where we generate these (the week after the challenge). `pos` is 1, 2, or 3 for first, second, third.
-//pfp-dir is the directory where profile images are stored and only really exists so that `test.typ` can redirect it to `sample_images`
-#let generate-winner-display(path-template, display-width, week-num, winner-name, pos, pfp-dir: "images/pfp") = {
+//image-dir is the directory where profile images are stored
+#let generate-winner-display(path-template, display-width, week-num, winner-name, pos, image-dir) = {
   let (pos-text, bg-color) = if pos == 1 {
     ("First", palette.next-week-bg(week-num))
   } else if pos == 2 {
@@ -45,8 +45,8 @@
   } else {
     panic("invalid position number; can only be 1, 2, 3 (first, second, third")
   }
-  let image = generate-winner-image(path-template.replace("X", pos-text), display-width - 2cm)
-  let nameplate = generate-winner-nameplate(winner-name, pfp-dir)
+  let image = generate-winner-image(image-dir + "/" + path-template.replace("X", pos-text), display-width - 2cm)
+  let nameplate = generate-winner-nameplate(winner-name, image-dir + "/pfp")
   let foreground = {
     helpers.spacing-block(display-width, 1cm)
     align(
@@ -67,10 +67,10 @@
   place(foreground)
 }
 
-#let generate-glyph-winner-display(week-num, winner-name, pos) = {
-  generate-winner-display("images/GlyphWinnerX.png", 16cm, week-num, winner-name, pos)
+#let generate-glyph-winner-display(week-num, winner-name, pos, image-dir) = {
+  generate-winner-display("GlyphWinnerX.png", 16cm, week-num, winner-name, pos, image-dir)
 }
 
-#let generate-ambi-winner-display(week-num, winner-name, pos) = {
-  generate-winner-display("images/AmbiWinnerX.png", 18cm, week-num, winner-name, pos)
+#let generate-ambi-winner-display(week-num, winner-name, pos, image-dir) = {
+  generate-winner-display("AmbiWinnerX.png", 18cm, week-num, winner-name, pos, image-dir)
 }
