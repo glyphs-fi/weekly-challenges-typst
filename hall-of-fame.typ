@@ -68,9 +68,9 @@
 }
 
 #let generate-glyph-winner-display(week-num, winner-name, pos, image-dir) = {
-  generate-winner-display("GlyphWinnerX.png", 16cm, week-num, winner-name, pos, image-dir)
+  generate-winner-display("GlyphWinnerX", 16cm, week-num, winner-name, pos, image-dir)
 }
 
 #let generate-ambi-winner-display(week-num, winner-name, pos, image-dir) = {
-  generate-winner-display("AmbiWinnerX.png", 18cm, week-num, winner-name, pos, image-dir)
+  generate-winner-display("AmbiWinnerX", 18cm, week-num, winner-name, pos, image-dir)
 }

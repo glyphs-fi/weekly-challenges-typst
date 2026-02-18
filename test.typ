@@ -160,7 +160,7 @@
           align(
             center,
             box(hall-of-fame.generate-winner-display(
-              challenge + "WinnerX.png",
+              challenge + "WinnerX",
               display-width,
               0,
               winner-name,

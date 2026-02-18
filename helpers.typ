@@ -293,7 +293,7 @@ returns text that is as big as it can be while fitting into a circle of radius `
   text(..text-args, size: text-size, text-str)
 }
 
-//convert template like "image_X.png" to (e.g.) "image_1.png"
+//convert template like "image_X" to (e.g.) "image_1"
 #let get-path(path-template, n) = {
   path-template.replace("X", str(n))
 }
@@ -416,7 +416,7 @@ note that the bounding box of the output is not affected by the drop shadow.
 #let number-of-submissions-return = state("number-of-submissions-return", 0)
 
 /*
-for a path template (such as "images/Glyph-X.png"), returns the number of files that exist matching that specification ("images/Glyph-1.png", "images/Glyph-2.png", etc)
+for a path template (such as "images/Glyph-X"), returns the number of files that exist matching that specification ("images/Glyph-1", "images/Glyph-2", etc)
 
 typst does not have any functionality for checking whether a file exists, nor does it have try-catch style error-handling, so we use a hacky workaround (basic idea adapted from https://sitandr.github.io/typst-examples-book/book/typstonomicon/try-catch.html) to simulate a try-catch.
 
