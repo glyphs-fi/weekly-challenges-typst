@@ -32,7 +32,7 @@
 
 
 //produces the main rectangular (with a circle at the top) card with all the text, g&a icon and drop shadow
-#let generate-announcement-card(card-width, announcement-text-str, start-date, config) = {
+#let generate-announcement-card(card-width, announcement-text-str, start-date, end-date, config) = {
   let main-rectangle-height = 9cm
 
   let title-text-size = 30pt
@@ -55,8 +55,19 @@
     fill: palette.orange,
     top-edge: "bounds",
     bottom-edge: "bounds",
-    helpers.display-date-range(start-date, start-date + duration(days: 7)),
+    helpers.display-date-range(start-date, end-date),
   )
+
+  //spacing will always be based on the same text, regardless of whether a particular date contains ascenders/descenders
+  let date-dummy-text = text(
+    weight: "bold",
+    size: date-text-size,
+    font: global-config.main-latin-font,
+    top-edge: "bounds",
+    bottom-edge: "bounds",
+    "abcdefghijklmnopqrstuwvxzy0123456789",
+  )
+  let date-dummy-text-height = measure(date-dummy-text).height
 
 
   let announcement-text-box = {
@@ -114,7 +125,7 @@
         center,
         move(
           dy: date-text-dy,
-          date-text,
+          box(height: date-dummy-text-height, date-text),
         ),
       )
       align(
@@ -166,14 +177,20 @@
 
 
 //produces a full announcement complete with card, background and pangrams
-#let generate-announcement(announcement-text-str, start-date, config) = context {
+#let generate-announcement(announcement-text-str, start-date, end-date, config) = context {
   let announcement-width = config.announcement-width
 
   //horizontal space on each side of the card
   let side-margin = 1cm
 
   //construct card, storing for later
-  let card = generate-announcement-card(announcement-width - 2 * side-margin, announcement-text-str, start-date, config)
+  let card = generate-announcement-card(
+    announcement-width - 2 * side-margin,
+    announcement-text-str,
+    start-date,
+    end-date,
+    config,
+  )
 
   //construct foreground
   let foreground = {
@@ -197,18 +214,18 @@
 
 
 //produces glyph announcement
-#let generate-glyph-announcement(glyph, weeknum, start-date) = {
+#let generate-glyph-announcement(glyph, weeknum, start-date, end-date) = {
   let config = glyph-announcement-config
   config += (
     primary-colour: palette.this-week-fg(weeknum),
     background-colour: palette.this-week-fg(weeknum),
     background-text-colour: palette.this-week-bg(weeknum),
   )
-  generate-announcement(glyph, start-date, config)
+  generate-announcement(glyph, start-date, end-date, config)
 }
 
 //produces ambigram announcement
-#let generate-ambi-announcement(ambi, start-date) = {
+#let generate-ambi-announcement(ambi, start-date, end-date) = {
   let config = ambi-announcement-config
-  generate-announcement(ambi, start-date, config)
+  generate-announcement(ambi, start-date, end-date, config)
 }

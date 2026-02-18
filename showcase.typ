@@ -157,7 +157,7 @@
 
 
 //produces a banner complete with title text, g&a logo, date and circular/rectangular badge with text inside
-#let generate-banner(banner-width, badge-text-str, start-date, config) = {
+#let generate-banner(banner-width, badge-text-str, start-date, end-date, config) = {
   //we work with the half-height and half-width since it simplifies the circular badge case
   let (badge-half-height, badge-half-width) = (1.5cm, 1.5cm)
   let rect-badge-max-width = 5cm
@@ -288,7 +288,7 @@
     font: global-config.main-latin-font,
     size: date-text-size,
     weight: "bold",
-    helpers.display-date-range(start-date, start-date + duration(days: 7)),
+    helpers.display-date-range(start-date, end-date),
   )
 
   //we measure the height of this text to figure out how to place the date; by measuring this text instead of the date itself, we make sure the date always ends up in the same place, regardless of whether it contains any ascenders/descenders
@@ -352,7 +352,7 @@
 
 
 //produces a full showcase complete with banner, image grid and background
-#let generate-showcase(badge-text-str, start-date, config, image-dir) = context {
+#let generate-showcase(badge-text-str, start-date, end-date, config, image-dir) = context {
   let rectangular-badge = config.rectangular-badge
   let showcase-width = config.showcase-width
 
@@ -360,7 +360,7 @@
   let side-margin = 1cm
 
   //construct banner, storing for later
-  let banner = generate-banner(showcase-width / 2 + 3cm, badge-text-str, start-date, config)
+  let banner = generate-banner(showcase-width / 2 + 3cm, badge-text-str, start-date, end-date, config)
 
   //construct image grid, storing for later
   let image-grid = generate-image-grid(
@@ -405,13 +405,13 @@
 
 
 //produces glyph showcase
-#let generate-glyph-showcase(glyph, weeknum, start-date, image-dir) = {
+#let generate-glyph-showcase(glyph, weeknum, start-date, end-date, image-dir) = {
   let config = glyph-showcase-config
   config += (primary-colour: palette.this-week-fg(weeknum))
-  generate-showcase(glyph, start-date, config, image-dir)
+  generate-showcase(glyph, start-date, end-date, config, image-dir)
 }
 
 //produces ambigram showcase
-#let generate-ambi-showcase(ambi, start-date, image-dir) = {
-  generate-showcase(ambi, start-date, ambi-showcase-config, image-dir)
+#let generate-ambi-showcase(ambi, start-date, end-date, image-dir) = {
+  generate-showcase(ambi, start-date, end-date, ambi-showcase-config, image-dir)
 }

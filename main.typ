@@ -2,6 +2,7 @@
 #import "announcement.typ" as announcement
 #import "hall-of-fame.typ" as hall-of-fame
 
+#let current-date = datetime.today()
 //page exactly as big as its contents
 #set page(width: auto, height: auto, margin: 0pt)
 
@@ -70,13 +71,17 @@
 
 //these have default values, but you can override them by uncommenting and editing the relevant line (no need to comment the default value line)
 
-//start date of upcoming challenge
-#let current-date = datetime.today()
-//#let current-date = datetime(year: 2069, month: 4, day: 20)
+//start/end date of upcoming challenges
+#let announcement-start-date = datetime.today()
+//#let announcement-start-date = datetime(year: 2069, month: 4, day: 20)
+#let announcement-end-date = announcement-start-date + duration(days: 7)
+//#let announcement-start-date = datetime(year: 2069, month: 4, day: 27)
 
-//start date of outgoing challenge
-#let showcase-date = current-date - duration(days: 7)
+//start date of outgoing challenges
+#let showcase-start-date = current-date - duration(days: 7)
 //#let showcase-date = datetime(year: 2069, month: 4, day: 13)
+#let showcase-end-date = showcase-start-date + duration(days: 7)
+//#let announcement-start-date = datetime(year: 2069, month: 4, day: 20)
 
 //directory to search for images
 #let image-dir = "images"
@@ -124,8 +129,28 @@
 //the strings specify the names you need to pass on the command line, but they're just the same as the variable names
 #let to-generate = listify(cmd-line-override("to-generate", to-generate, fn: parse-list-or-str))
 #let current-week = cmd-line-override("current-week", current-week, fn: eval)
-#let current-date = cmd-line-override("current-date", current-date, fn: parse-date)
-#let showcase-date = cmd-line-override("showcase-date", showcase-date, fn: parse-date)
+#let announcement-start-date = cmd-line-override("announcement-start-date", announcement-start-date, fn: parse-date)
+#let announcement-end-date = cmd-line-override(
+  "announcement-end-date",
+  if "announcement-start-date" in sys.inputs.keys() {
+    //if a start date is specified on the command line, default to one week after that
+    announcement-start-date + duration(days: 7)
+  } else {
+    announcement-end-date
+  },
+  fn: parse-date,
+)
+#let showcase-start-date = cmd-line-override("showcase-start-date", showcase-start-date, fn: parse-date)
+#let showcase-end-date = cmd-line-override(
+  "showcase-end-date",
+  if "showcase-start-date" in sys.inputs.keys() {
+    //if a start date is specified on the command line, default to one week after that
+    showcase-start-date + duration(days: 7)
+  } else {
+    showcase-end-date
+  },
+  fn: parse-date,
+)
 #let image-dir = cmd-line-override("image-dir", image-dir)
 
 #let announcement-glyph = cmd-line-override("announcement-glyph", announcement-glyph)
@@ -161,9 +186,20 @@
 #for type in to-generate {
   (
     if type == "glyph-announcement" {
-      announcement.generate-glyph-announcement(announcement-glyph, current-week, current-date)
+      announcement.generate-glyph-announcement(
+        announcement-glyph,
+        current-week,
+        announcement-start-date,
+        announcement-end-date,
+      )
     } else if type == "glyph-showcase" {
-      showcase.generate-glyph-showcase(showcase-glyph, current-week - 1, showcase-date, image-dir)
+      showcase.generate-glyph-showcase(
+        showcase-glyph,
+        current-week - 1,
+        showcase-start-date,
+        showcase-end-date,
+        image-dir,
+      )
     } else if type == "glyph-first" {
       hall-of-fame.generate-glyph-winner-display(current-week - 2, glyph-winner-first, 1, image-dir)
     } else if type == "glyph-second" {
@@ -171,9 +207,9 @@
     } else if type == "glyph-third" {
       hall-of-fame.generate-glyph-winner-display(current-week - 2, glyph-winner-third, 3, image-dir)
     } else if type == "ambigram-announcement" {
-      announcement.generate-ambi-announcement(announcement-ambi, current-date)
+      announcement.generate-ambi-announcement(announcement-ambi, announcement-start-date, announcement-end-date)
     } else if type == "ambigram-showcase" {
-      showcase.generate-ambi-showcase(showcase-ambi, showcase-date, image-dir)
+      showcase.generate-ambi-showcase(showcase-ambi, showcase-start-date, showcase-end-date, image-dir)
     } else if type == "ambigram-first" {
       hall-of-fame.generate-ambi-winner-display(current-week - 2, ambi-winner-first, 1, image-dir)
     } else if type == "ambigram-second" {
