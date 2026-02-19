@@ -1,0 +1,12 @@
+name: download_fonts
+
+environment:
+  sdk: '^3.10.1'
+
+dependencies:
+  http: ^1.6.0
+  path: ^1.9.1
+
+dev_dependencies:
+  very_good_analysis: ^10.0.0
+
