@@ -27,7 +27,7 @@
       "Stix Two Text", //all of [Basic Latin], [Latin Extended-A]; basic IPA; some misc Latin
       "Noto Serif", //all of [Latin Extended-{B,C,E,F}], [Phonetic Extensions{, Supplements}]; most of [Latin Extended-{D,G}]
       "FreeSerif", //roman numerals in [Number Forms]
-      "Iosevka", //most of remaining part of [Latin Extended-D]
+      "Adwaita Mono", //most of remaining part of [Latin Extended-D]
       "Plangothic P2", //remaining part of [Latin Extended-G]
       "Noto Sans CJK TC", //fullwidth latin chars in [Halfwidth and Fullwidth Forms]
     ), //script complete except for U+A7D2 LATIN CAPITAL LETTER DOUBLE THORN, U+A7D4 LATIN CAPITAL LETTER DOUBLE WYNN (from [Latin Extended-D])
@@ -73,7 +73,7 @@
     ), //script complete
   )
 
-  //fonts that are fully supported by a Noto Sans font with the script in its name
+  //scripts that are fully supported by a Noto Sans font with the script in its name
   let noto-sans-supports = (
     "Yi",
     "Pahawh Hmong",
@@ -85,7 +85,7 @@
     "Vai",
     "Canadian Aboriginal",
   )
-  //fonts that are fully supported by a Noto Serif font with the script in its name
+  //scripts that are fully supported by a Noto Serif font with the script in its name
   let noto-serif-supports = ("Georgian", "Makasar")
   for script in noto-sans-supports {
     font-stack.push(script)
