@@ -5,7 +5,7 @@
 #let scripts(..names) = {
   regex({
     "["
-    for name in ("Common",) + names.pos() {
+    for name in (("Common",) + names.pos()).dedup() {
       "\p{"
       name
       "}"
@@ -18,6 +18,10 @@
 #let font-stack = {
   let font-stack = (
     //the following comments use [] to identify blocks and {} to identify scripts
+    "Common",
+    (
+      "Noto Sans Symbols",
+    ), // a lot of {Common} will be covered by various other fonts, so we don't seek full coverage here
     "Latin",
     (
       "Stix Two Text", //all of [Basic Latin], [Latin Extended-A]; basic IPA; some misc Latin
@@ -44,15 +48,53 @@
       "Plangothic P1", //all of [CJK Unified Ideographs Extension {B,C,D,E,F,I}]
       "Plangothic P2", //all of [CJK Unified Ideographs Extension {G,H,J}]
     ), //script complete
-    "Coptic",
-    (
-      "Noto Sans Coptic", //everything
-    ), //script complete
     "Tangut",
     (
       "唐兀銀川", //"Tangut Yinchuan"; everything
     ), //script complete
+    "Syriac",
+    (
+      "Noto Sans Syriac", //supports everything except [Syriac Supplement]
+      "Plangothic P2", //gotta love comprehensive fonts
+    ), //script complete
+    "Runic",
+    (
+      "Babelstone Runic",
+    ), //script complete
+    "Tamil",
+    (
+      "Noto Sans Tamil",
+      "Noto Sans Tamil Supplement", //they put [Tamil Supplement] in a different font for some reason
+    ), //script complete
+    "Glagolitic",
+    (
+      "Noto Sans Glagolitic", //everything except literally two characters (U+2C2F, U+2C5F)
+      "Plangothic P2", //to the rescue again
+    ), //script complete
   )
+
+  //fonts that are fully supported by a Noto Sans font with the script in its name
+  let noto-sans-supports = (
+    "Yi",
+    "Pahawh Hmong",
+    "Phoenician",
+    "Tagalog",
+    "Coptic",
+    "Khmer",
+    "Osmanya",
+    "Vai",
+    "Canadian Aboriginal",
+  )
+  //fonts that are fully supported by a Noto Serif font with the script in its name
+  let noto-serif-supports = ("Georgian", "Makasar")
+  for script in noto-sans-supports {
+    font-stack.push(script)
+    font-stack.push(("Noto Sans " + script,))
+  }
+  for script in noto-serif-supports {
+    font-stack.push(script)
+    font-stack.push(("Noto Serif " + script,))
+  }
 
   //ridiculous codegolf version of the below code that i couldn't resist writing
   //font-stack.fold((),(a,x)=>(a+=if""in x{(x,)}else{x.map(((..a,x)=a)+f=>(name:f,covers:scripts(x)))})+a)

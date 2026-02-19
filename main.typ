@@ -102,24 +102,6 @@
   }
 }
 
-//wrap a lone value in a list
-#let listify = x => {
-  if type(x) != array {
-    (x,)
-  } else {
-    x
-  }
-}
-
-//parse what might be a list or a lone string
-#let parse-list-or-str = x => {
-  if x.starts-with("(") {
-    eval(x.replace("(", "(\"").replace(",", "\",\"").replace(")", "\")"))
-  } else {
-    x
-  }
-}
-
 //lmao this is the only way to parse a string into a date
 #let parse-date = x => {
   toml(bytes("date = " + x)).date
@@ -127,7 +109,7 @@
 
 //oh god the copypaste
 //the strings specify the names you need to pass on the command line, but they're just the same as the variable names
-#let to-generate = listify(cmd-line-override("to-generate", to-generate, fn: parse-list-or-str))
+#let to-generate = cmd-line-override("to-generate", to-generate, fn: x => x.split(" "))
 #let current-week = cmd-line-override("current-week", current-week, fn: eval)
 #let announcement-start-date = cmd-line-override("announcement-start-date", announcement-start-date, fn: parse-date)
 #let announcement-end-date = cmd-line-override(

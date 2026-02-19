@@ -32,6 +32,43 @@
     "very very excessively extremely long it just doesn't end it keeps going but at least it has spaces",
     "AAAAAAAAAAAAAAAAAAAAAAAAAAA",
   )
+  let test-glyph-suggestions = (
+    "ɮ",
+    "ᜐ",
+    "𐤌",
+    "ꑷ",
+    "ܬ",
+    "𖬡𖬵",
+    "⅌",
+    "ᛃ",
+    "ឍ",
+    "爪",
+    "𐒁",
+    "ꙭ",
+    "கு",
+    "წ",
+    "ꕩ",
+    "Ѧ",
+    "𑻧",
+    "ᙢ",
+    " 🜏",
+    "Ⱆ",
+  )
+  let test-ambi-suggestions = (
+    "punch",
+    "nightmare",
+    "[musical genre]",
+    "riddle",
+    "infinity",
+    "mirror",
+    "[lake]",
+    "asleep/awake",
+    "shout",
+    "myth",
+    "[Pokémon]",
+    "string",
+    "kijetesantakalu",
+  )
   let glyph-primary = palette.this-week-fg(200)
   let glyph-bg = palette.this-week-bg(200)
   let ambi-bg = palette.purple
@@ -61,6 +98,15 @@
           ),
         )
       }
+        + (
+          align(center, showcase.generate-banner(
+            12cm,
+            "?",
+            test-date,
+            test-date,
+            showcase.glyph-suggestion-vote-config,
+          )),
+        )
     ).join(helpers.spacing-block(15cm, 1cm)),
   )
   draw-test-label("glyph-banner-test")
@@ -107,6 +153,15 @@
           ),
         )
       }
+        + (
+          align(center, showcase.generate-banner(
+            14cm,
+            "?",
+            test-date,
+            test-date,
+            showcase.ambi-suggestion-vote-config,
+          )),
+        )
     ).join(helpers.spacing-block(15cm, 1cm)),
   )
   draw-test-label("ambi-banner-test")
@@ -153,6 +208,26 @@
     }.join(helpers.spacing-block(18cm, 1cm)),
   )
   draw-test-label("image-grid-test")
+  pagebreak()
+
+  box(
+    inset: 1cm,
+    fill: glyph-bg,
+    (
+      align(center, box(showcase.generate-image-grid(
+        18cm,
+        showcase.glyph-suggestion-vote-config + (suggestion-list: test-glyph-suggestions),
+        "",
+      ))),
+      align(center, box(showcase.generate-image-grid(
+        18cm,
+        showcase.ambi-suggestion-vote-config + (suggestion-list: test-ambi-suggestions),
+        "",
+      ))),
+    ).join(helpers.spacing-block(20cm, 1cm)),
+  )
+  draw-test-label("suggestion-grid-test")
+
   pagebreak()
 
   box(

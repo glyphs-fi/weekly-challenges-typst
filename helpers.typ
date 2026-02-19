@@ -236,7 +236,7 @@ returns a `box` containing a `par` (technically a `v-tight-par`) of the specifie
 
 more complex than the most naive methods (e.g. rendering text at an arbitrary size on an infinite canvas and then scaling it to fit in the box) because it takes into account word wrapping
 */
-#let boxed-fitted-par(box-args, text-args, text-str, margin: 0cm, leading: 0.5em) = {
+#let boxed-fitted-par(box-args, text-args, text-str, margin: 0cm, leading: 0.5em, max-size: 200pt) = {
   let in-bounds = measurement => (
     measurement.width < box-args.width - margin * 2 and measurement.height < box-args.height - margin * 2
   )
@@ -251,9 +251,9 @@ more complex than the most naive methods (e.g. rendering text at an arbitrary si
   )
 
   //binary search to find the largest text size that fits the box
-  let upper-bound = 200pt
+  let upper-bound = max-size
   let lower-bound = 0pt
-  let current-size = 100pt
+  let current-size = upper-bound / 2
   let optimal-par = while true {
     //we use the strict flag, so this will be `none` if the text is a really bad fit
     let par = construct-par(current-size, strict: true)

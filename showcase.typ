@@ -10,13 +10,15 @@
   showcase-width: 18cm,
   num-cols: 3,
   aspect-ratio: 1,
-  path-template: "Glyph_X",
+  is-short-date: false,
   title-text: "Weekly Glyph Challenge",
   pangram-font-size: 14.5pt,
   rectangular-badge: false,
   background-colour: palette.green,
   background-text-colour: palette.greenbg,
   badge-text-weight: "regular",
+  invert-badge-colours: false,
+  path-template: "Glyph_X",
   /* set dynamically in `generate-glyph-showcase`
   primary-colour,
   */
@@ -25,14 +27,52 @@
   showcase-width: 22cm,
   num-cols: 3,
   aspect-ratio: 1.5,
-  path-template: "Ambi_X",
+  is-short-date: false,
   title-text: "Weekly Ambigram Challenge",
   pangram-font-size: 14.5pt,
   rectangular-badge: true,
   background-colour: palette.purple,
   background-text-colour: palette.purplebg,
   badge-text-weight: "bold",
+  invert-badge-colours: false,
+  path-template: "Ambi_X",
   primary-colour: palette.purple,
+)
+#let glyph-suggestion-vote-config = (
+  showcase-width: 20cm,
+  num-cols: 5,
+  aspect-ratio: 1,
+  is-short-date: true,
+  title-text: "Glyph Suggestion Vote!",
+  pangram-font-size: 14.5pt,
+  rectangular-badge: false,
+  background-colour: palette.green,
+  background-text-colour: palette.greenbg,
+  badge-text-weight: "bold",
+  invert-badge-colours: true,
+  primary-colour: palette.orange,
+  max-item-size: 200pt,
+  /* set dynamically
+  suggestion-list,
+  */
+)
+#let ambi-suggestion-vote-config = (
+  showcase-width: 22cm,
+  num-cols: 3,
+  aspect-ratio: 2,
+  is-short-date: true,
+  title-text: "Ambigram Suggestion Vote!",
+  pangram-font-size: 14.5pt,
+  rectangular-badge: false,
+  background-colour: palette.purple,
+  background-text-colour: palette.purplebg,
+  badge-text-weight: "bold",
+  invert-badge-colours: true,
+  primary-colour: palette.orange,
+  max-item-size: 35pt,
+  /* set dynamically
+  suggestion-list,
+  */
 )
 
 
@@ -40,13 +80,18 @@
 
 //produces a grid of framed images together with their labels and a background rectangle
 #let generate-image-grid(grid-width, config, image-dir) = {
-  let full-path-template = image-dir + "/" + config.path-template
-  //somewhat hacky code for finding number of submissions, needs to live in its own context for reasons
-  context {
-    helpers.number-of-submissions(full-path-template)
+  if "path-template" in config.keys() {
+    let full-path-template = image-dir + "/" + config.path-template
+    //somewhat hacky code for finding number of submissions, needs to live in its own context for reasons
+    context {
+      helpers.number-of-submissions(full-path-template)
+    }
   }
   context {
     let num-items = helpers.number-of-submissions-return.get()
+    if "suggestion-list" in config.keys() {
+      num-items = config.suggestion-list.len()
+    }
     helpers.number-of-submissions-return.update(0)
     let num-cols = config.num-cols
     let num-rows = helpers.ceil-division(num-items, num-cols)
@@ -70,40 +115,66 @@
       let column-offset = between-item-margin
 
       for col in range(items-in-row) {
-        let item-num = (row * num-cols) + col + 1 //1-indexed
-        let path = helpers.get-path(full-path-template, item-num)
-        let path-label = label(path)
-
-        let img = image(path)
-        //will either be the image's natural dimensions, or (if too big) the largest dimensions it can render at within an `item-width` x `item-height` box
-        let img-render-dimensions = measure(img, height: item-height, width: item-width)
-        //scale up images that are too small to fit the box
-        let scale-factor = calc.min(
-          item-height / img-render-dimensions.height,
-          item-width / img-render-dimensions.width,
-        )
-        let scaled-width = img-render-dimensions.width * scale-factor
-        let scaled-height = img-render-dimensions.height * scale-factor
-        //recreate image with new dimensions
-        let img = image(
-          path,
-          width: img-render-dimensions.width * scale-factor,
-          height: img-render-dimensions.height * scale-factor,
-        )
-
-        let img-box = box(
-          height: item-height,
+        let item-num = (row * num-cols) + col
+        let item-box-args = (
           width: item-width,
+          height: item-height,
           stroke: frame-stroke + config.primary-colour,
-          outset: (
-            x: (frame-stroke - (item-width - scaled-width)) / 2,
-            y: (frame-stroke - (item-height - scaled-height)) / 2,
-          ),
-          align(
-            center + horizon,
-            img,
-          ),
         )
+        let item-box = if "path-template" in config.keys() {
+          let full-path-template = image-dir + "/" + config.path-template
+          let path = helpers.get-path(full-path-template, item-num + 1)
+          let path-label = label(path)
+
+          let img = image(path)
+          //will either be the image's natural dimensions, or (if too big) the largest dimensions it can render at within an `item-width` x `item-height` box
+          let img-render-dimensions = measure(img, height: item-height, width: item-width)
+          //scale up images that are too small to fit the box
+          let scale-factor = calc.min(
+            item-height / img-render-dimensions.height,
+            item-width / img-render-dimensions.width,
+          )
+          let scaled-width = img-render-dimensions.width * scale-factor
+          let scaled-height = img-render-dimensions.height * scale-factor
+          //recreate image with new dimensions
+          let img = image(
+            path,
+            width: img-render-dimensions.width * scale-factor,
+            height: img-render-dimensions.height * scale-factor,
+          )
+          box(
+            ..item-box-args,
+            outset: (
+              x: (frame-stroke - (item-width - scaled-width)) / 2,
+              y: (frame-stroke - (item-height - scaled-height)) / 2,
+            ),
+            align(
+              center + horizon,
+              img,
+            ),
+          )
+        } else if "suggestion-list" in config.keys() {
+          let inner-box-args = (
+            width: item-width * 0.9,
+            height: item-height * 0.9,
+          )
+          let text-args = (
+            font: global-config.font-stack,
+            top-edge: "bounds",
+            bottom-edge: "bounds",
+          )
+          box(
+            ..item-box-args,
+            align(center + horizon, helpers.boxed-fitted-par(
+              inner-box-args,
+              text-args,
+              config.suggestion-list.at(item-num),
+              margin: 10pt,
+              max-size: config.max-item-size,
+            )),
+          )
+        }
+
 
         let label-box = helpers.drop-shadowed-box(
           width: label-square-length,
@@ -115,21 +186,21 @@
               fill: white,
               font: global-config.main-latin-font,
               size: 18pt,
-              global-config.LABEL-SEQUENCE.at(item-num - 1),
+              global-config.LABEL-SEQUENCE.at(item-num),
               weight: "bold",
             ),
           ),
         )
 
-        //coordinates of this image
+        //coordinates of this item
         let item-xpos = row-offset + col * between-item-width
         let item-ypos = column-offset + row * between-item-height
 
-        //draw image
+        //draw item
         place(
           dx: item-xpos,
           dy: item-ypos,
-          img-box,
+          item-box,
         )
 
         //draw label
@@ -161,10 +232,10 @@
   //we work with the half-height and half-width since it simplifies the circular badge case
   let (badge-half-height, badge-half-width) = (1.5cm, 1.5cm)
   let rect-badge-max-width = 5cm
-  let badge-text-min-margin = 0.3cm
+  let badge-text-min-margin = 0.4cm
 
   let badge-text-args = (
-    fill: config.primary-colour,
+    fill: if config.invert-badge-colours { palette.white } else { config.primary-colour },
     weight: config.badge-text-weight,
     font: global-config.font-stack,
     /*
@@ -233,10 +304,10 @@
   let badge = helpers.drop-shadowed-box(
     width: badge-half-width * 2,
     height: badge-half-height * 2,
-    fill: palette.white,
+    fill: if config.invert-badge-colours { config.primary-colour } else { palette.white },
     radius: badge-round-radius,
     shadow-round-radius: badge-round-radius,
-    stroke: badge-stroke + config.primary-colour,
+    stroke: badge-stroke + if config.invert-badge-colours { palette.white } else { config.primary-colour },
     ..if not config.rectangular-badge { (shadow-base-colour: black.lighten(30%).transparentize(30%)) },
     align(
       center + horizon,
@@ -288,7 +359,11 @@
     font: global-config.main-latin-font,
     size: date-text-size,
     weight: "bold",
-    helpers.display-date-range(start-date, end-date),
+    if config.is-short-date {
+      start-date.display("[month repr:long] [year]")
+    } else {
+      helpers.display-date-range(start-date, end-date)
+    },
   )
 
   //we measure the height of this text to figure out how to place the date; by measuring this text instead of the date itself, we make sure the date always ends up in the same place, regardless of whether it contains any ascenders/descenders
@@ -415,3 +490,63 @@
 #let generate-ambi-showcase(ambi, start-date, end-date, image-dir) = {
   generate-showcase(ambi, start-date, end-date, ambi-showcase-config, image-dir)
 }
+
+#let generate-glyph-suggestion-vote(date, suggestion-list) = {
+  let config = glyph-suggestion-vote-config
+  config += (suggestion-list: suggestion-list)
+  generate-showcase("?", date, date, config, "")
+}
+
+#let generate-ambi-suggestion-vote(date, suggestion-list) = {
+  let config = ambi-suggestion-vote-config
+  config += (suggestion-list: suggestion-list)
+  generate-showcase("?", date, date, config, "")
+}
+
+//page exactly as big as its contents
+#set page(width: auto, height: auto, margin: 0pt)
+
+//to prevent automatic spacing between `block`s
+#set par(spacing: 0pt)
+
+//we always place objects relative to the topleft of their container
+#set place(top + left)
+#generate-glyph-suggestion-vote(datetime(day: 1, month: 11, year: 2023), (
+  "ɮ",
+  "ᜐ",
+  "𐤌",
+  "ꑷ",
+  "ܬ",
+  "𖬡𖬵",
+  "⅌",
+  "ᛃ",
+  "ឍ",
+  "爪",
+  "𐒁",
+  "ꙭ",
+  "கு",
+  "წ",
+  "ꕩ",
+  "Ѧ",
+  "𑻧",
+  "ᙢ",
+  " 🜏",
+  "Ⱆ",
+))
+#pagebreak()
+
+#generate-ambi-suggestion-vote(datetime(day: 1, month: 5, year: 2024), (
+  "punch",
+  "nightmare",
+  "[musical genre]",
+  "riddle",
+  "infinity",
+  "mirror",
+  "[lake]",
+  "asleep/awake",
+  "shout",
+  "myth",
+  "[Pokémon]",
+  "string",
+  "kijetesantakalu",
+))
