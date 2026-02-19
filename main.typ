@@ -45,10 +45,10 @@
 //outgoing week's glyph
 #let showcase-glyph = ""
 
-//winner display names
-#let glyph-winner-first = ""
-#let glyph-winner-second = ""
-#let glyph-winner-third = ""
+//winner usernames (used to locate the profile picture; will also be the displayed name unless overridden further down)
+#let glyph-winner-first-username = ""
+#let glyph-winner-second-username = ""
+#let glyph-winner-third-username = ""
 
 
 
@@ -60,10 +60,10 @@
 //outgoing week's ambigram
 #let showcase-ambi = ""
 
-//winner display names
-#let ambi-winner-first = ""
-#let ambi-winner-second = ""
-#let ambi-winner-third = ""
+//winner usernames
+#let ambi-winner-first-username = ""
+#let ambi-winner-second-username = ""
+#let ambi-winner-third-username = ""
 
 
 
@@ -82,6 +82,14 @@
 //#let showcase-date = datetime(year: 2069, month: 4, day: 13)
 #let showcase-end-date = showcase-start-date + duration(days: 7)
 //#let announcement-start-date = datetime(year: 2069, month: 4, day: 20)
+
+//winner display names
+#let glyph-winner-first-nickname = glyph-winner-first-username
+#let glyph-winner-second-nickname = glyph-winner-second-username
+#let glyph-winner-third-nickname = glyph-winner-third-username
+#let ambi-winner-first-nickname = ambi-winner-first-username
+#let ambi-winner-second-nickname = ambi-winner-second-username
+#let ambi-winner-third-nickname = ambi-winner-third-username
 
 //directory to search for images
 #let image-dir = "images"
@@ -137,15 +145,21 @@
 
 #let announcement-glyph = cmd-line-override("announcement-glyph", announcement-glyph)
 #let showcase-glyph = cmd-line-override("showcase-glyph", showcase-glyph)
-#let glyph-winner-first = cmd-line-override("glyph-winner-first", glyph-winner-first)
-#let glyph-winner-second = cmd-line-override("glyph-winner-second", glyph-winner-second)
-#let glyph-winner-third = cmd-line-override("glyph-winner-third", glyph-winner-third)
+#let glyph-winner-first-username = cmd-line-override("glyph-winner-first-username", glyph-winner-first-username)
+#let glyph-winner-first-nickname = cmd-line-override("glyph-winner-first-nickname", glyph-winner-first-nickname)
+#let glyph-winner-second-username = cmd-line-override("glyph-winner-second-username", glyph-winner-second-username)
+#let glyph-winner-second-nickname = cmd-line-override("glyph-winner-second-nickname", glyph-winner-second-nickname)
+#let glyph-winner-third-username = cmd-line-override("glyph-winner-third-username", glyph-winner-third-username)
+#let glyph-winner-third-nickname = cmd-line-override("glyph-winner-third-nickname", glyph-winner-third-nickname)
 
 #let announcement-ambi = cmd-line-override("announcement-ambi", announcement-ambi)
 #let showcase-ambi = cmd-line-override("showcase-ambi", showcase-ambi)
-#let ambi-winner-first = cmd-line-override("ambi-winner-first", ambi-winner-first)
-#let ambi-winner-second = cmd-line-override("ambi-winner-second", ambi-winner-second)
-#let ambi-winner-third = cmd-line-override("ambi-winner-third", ambi-winner-third)
+#let ambi-winner-first-username = cmd-line-override("ambi-winner-first-username", ambi-winner-first-username)
+#let ambi-winner-first-nickname = cmd-line-override("ambi-winner-first-nickname", ambi-winner-first-nickname)
+#let ambi-winner-second-username = cmd-line-override("ambi-winner-second-username", ambi-winner-second-username)
+#let ambi-winner-second-nickname = cmd-line-override("ambi-winner-second-nickname", ambi-winner-second-nickname)
+#let ambi-winner-third-username = cmd-line-override("ambi-winner-third-username", ambi-winner-third-username)
+#let ambi-winner-third-nickname = cmd-line-override("ambi-winner-third-nickname", ambi-winner-third-nickname)
 
 
 //if "winners" is specified, generate all three subtypes
@@ -183,21 +197,57 @@
         image-dir,
       )
     } else if type == "glyph-first" {
-      hall-of-fame.generate-glyph-winner-display(current-week - 2, glyph-winner-first, 1, image-dir)
+      hall-of-fame.generate-glyph-winner-display(
+        current-week - 2,
+        glyph-winner-first-username,
+        glyph-winner-first-nickname,
+        1,
+        image-dir,
+      )
     } else if type == "glyph-second" {
-      hall-of-fame.generate-glyph-winner-display(current-week - 2, glyph-winner-second, 2, image-dir)
+      hall-of-fame.generate-glyph-winner-display(
+        current-week - 2,
+        glyph-winner-second-username,
+        glyph-winner-second-nickname,
+        2,
+        image-dir,
+      )
     } else if type == "glyph-third" {
-      hall-of-fame.generate-glyph-winner-display(current-week - 2, glyph-winner-third, 3, image-dir)
+      hall-of-fame.generate-glyph-winner-display(
+        current-week - 2,
+        glyph-winner-third-username,
+        glyph-winner-third-nickname,
+        3,
+        image-dir,
+      )
     } else if type == "ambigram-announcement" {
       announcement.generate-ambi-announcement(announcement-ambi, announcement-start-date, announcement-end-date)
     } else if type == "ambigram-showcase" {
       showcase.generate-ambi-showcase(showcase-ambi, showcase-start-date, showcase-end-date, image-dir)
     } else if type == "ambigram-first" {
-      hall-of-fame.generate-ambi-winner-display(current-week - 2, ambi-winner-first, 1, image-dir)
+      hall-of-fame.generate-ambi-winner-display(
+        current-week - 2,
+        ambi-winner-first-username,
+        ambi-winner-first-nickname,
+        1,
+        image-dir,
+      )
     } else if type == "ambigram-second" {
-      hall-of-fame.generate-ambi-winner-display(current-week - 2, ambi-winner-second, 2, image-dir)
+      hall-of-fame.generate-ambi-winner-display(
+        current-week - 2,
+        ambi-winner-second-username,
+        ambi-winner-second-nickname,
+        2,
+        image-dir,
+      )
     } else if type == "ambigram-third" {
-      hall-of-fame.generate-ambi-winner-display(current-week - 2, ambi-winner-third, 3, image-dir)
+      hall-of-fame.generate-ambi-winner-display(
+        current-week - 2,
+        ambi-winner-third-username,
+        ambi-winner-third-nickname,
+        3,
+        image-dir,
+      )
     } else {
       panic("invalid output type in `to-generate`")
     },
