@@ -29,7 +29,7 @@ typedef FontFileDefinition = ({String family, String style, String weight, Strin
 final http.Client client = http.Client();
 
 Future<void> main(List<String> args) async {
-  final Directory fontsDir = Directory(p.dirname(Platform.script.toFilePath()));
+  final Directory fontsDir = Directory(p.normalize(p.join(Platform.script.toFilePath(), "..", "..", "fonts")));
   final Set<FontFileDefinition> fontFiles = {};
 
   for (final String link in googleFontsLinks) {
@@ -66,7 +66,7 @@ Future<void> main(List<String> args) async {
     final Uint8List bytes = await client.readBytes(uri);
     final File archiveFile = File(p.join(fontsDir.path, p.basename(link)));
     await archiveFile.writeAsBytes(bytes);
-    await extractFileToDisk(archiveFile.path, ".");
+    await extractFileToDisk(archiveFile.path, fontsDir.path);
     await archiveFile.delete();
   }
 

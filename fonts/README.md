@@ -9,21 +9,3 @@ typst compile test.typ --ignore-system-fonts --font-path ./fonts/
 ```
 
 If there are any missing fonts, Typst will log an error about it.
-
-## Script
-
-This folder _also_ contains a Dart Script which automatically downloads the latest versions of all the fonts we need.
-
-To run it, first install the Dart SDK, change your working directory to this directory,
-and then run this command to download the packages that the script uses:
-
-```bash
-dart pub get
-```
-
-From then on, you can run either of these two commands to execute the script:
-
-```bash
-dart run download_fonts.dart
-./download_fonts.dart
-```

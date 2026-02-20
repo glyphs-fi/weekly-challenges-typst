@@ -1,4 +1,4 @@
-name: download_fonts
+name: fonts_downloader
 
 environment:
   sdk: '^3.10.1'
