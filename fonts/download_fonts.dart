@@ -3,12 +3,16 @@
 import "dart:io";
 import "dart:typed_data";
 
+import "package:archive/archive_io.dart";
 import "package:http/http.dart" as http;
 import "package:path/path.dart" as p;
 
 final List<String> googleFontsLinks = [
   "https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400..700;1,400..700",
   "https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400..900",
+];
+final List<String> archivedFontsLinks = [
+  "https://ftp.gnu.org/gnu/freefont/freefont-otf-20120503.tar.gz" /* For FreeSerif. No need for version checking, because we are not expecting a new version ever. */,
 ];
 
 typedef FontFileDefinition = ({String family, String style, String weight, String url});
@@ -32,6 +36,15 @@ Future<void> main(List<String> args) async {
     final File fontFile = File(p.join(fontDir.path, filename));
     final Uint8List bytes = await client.readBytes(uri);
     await fontFile.writeAsBytes(bytes);
+  }
+
+  for (final String link in archivedFontsLinks) {
+    final Uri uri = Uri.parse(link);
+    final Uint8List bytes = await client.readBytes(uri);
+    final File archiveFile = File(p.join(fontsDir.path, p.basename(link)));
+    await archiveFile.writeAsBytes(bytes);
+    await extractFileToDisk(archiveFile.path, ".");
+    await archiveFile.delete();
   }
 
   client.close();

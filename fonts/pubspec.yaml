@@ -4,6 +4,7 @@ environment:
   sdk: '^3.10.1'
 
 dependencies:
+  archive: ^4.0.9
   http: ^1.6.0
   path: ^1.9.1
 
