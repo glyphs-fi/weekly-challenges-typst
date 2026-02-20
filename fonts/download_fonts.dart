@@ -11,6 +11,15 @@ final List<String> googleFontsLinks = [
   "https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400..700;1,400..700",
   "https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400..900",
 ];
+
+//<Directory Name, Font Links>
+final Map<String, List<String>> directFontsLinks = {
+  "Plangothic": [
+    "https://github.com/Fitzgerald-Porthmouth-Koenigsegg/Plangothic_Project/releases/latest/download/PlangothicP1-Regular.ttf",
+    "https://github.com/Fitzgerald-Porthmouth-Koenigsegg/Plangothic_Project/releases/latest/download/PlangothicP2-Regular.ttf",
+  ],
+};
+
 final List<String> archivedFontsLinks = [
   "https://ftp.gnu.org/gnu/freefont/freefont-otf-20120503.tar.gz" /* For FreeSerif. No need for version checking, because we are not expecting a new version ever. */,
 ];
@@ -36,6 +45,20 @@ Future<void> main(List<String> args) async {
     final File fontFile = File(p.join(fontDir.path, filename));
     final Uint8List bytes = await client.readBytes(uri);
     await fontFile.writeAsBytes(bytes);
+  }
+
+  for (final MapEntry<String, List<String>> entry in directFontsLinks.entries) {
+    final String directoryName = entry.key;
+    final List<String> links = entry.value;
+
+    final Directory fontDir = Directory(p.join(fontsDir.path, directoryName))..createSync();
+
+    for (final String link in links) {
+      final Uri uri = Uri.parse(link);
+      final File fontFile = File(p.join(fontDir.path, p.basename(link)));
+      final Uint8List bytes = await client.readBytes(uri);
+      await fontFile.writeAsBytes(bytes);
+    }
   }
 
   for (final String link in archivedFontsLinks) {
