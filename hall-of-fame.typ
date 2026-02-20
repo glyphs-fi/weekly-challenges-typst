@@ -14,20 +14,26 @@
   helpers.spacing-block(image-width, residual-height / 2)
 }
 
-#let generate-winner-nameplate(winner-username, winner-nickname, pfp-dir) = {
+#let generate-winner-nameplate(winner-username, winner-nickname, pfp-dir, max-nameplate-width) = {
   let pfp = box(width: 1.5cm, height: 1.5cm, radius: 1.5cm, clip: true, image(pfp-dir + "/" + winner-username + ".png"))
   box(
     height: 1.5cm,
     {
       pfp
       h(15pt)
-      box(height: 1.5cm, align(horizon, text(
+      let construct-text = size => text(
         winner-nickname,
         font: global-config.font-stack,
         fill: palette.white,
-        size: 40pt,
+        size: size,
         weight: "bold",
         style: "italic",
+      )
+      box(height: 1.5cm, align(horizon, helpers.find-largest(
+        construct-text,
+        40pt,
+        max-nameplate-width - 1.5cm - 15pt,
+        1.5cm,
       )))
     },
   )
@@ -54,7 +60,7 @@
     panic("invalid position number; can only be 1, 2, 3 (first, second, third")
   }
   let image = generate-winner-image(image-dir + "/" + path-template.replace("X", pos-text), display-width - 2cm)
-  let nameplate = generate-winner-nameplate(winner-username, winner-nickname, image-dir + "/pfp")
+  let nameplate = generate-winner-nameplate(winner-username, winner-nickname, image-dir + "/pfp", display-width - 2cm)
   let foreground = {
     helpers.spacing-block(display-width, 1cm)
     align(
@@ -75,10 +81,10 @@
   place(foreground)
 }
 
-#let generate-glyph-winner-display(week-num, winner-username, winner-nickname, pos, image-dir) = {
+#let generate-glyph-winner-display(week-num, winner-username, winner-nickname, pos, image-dir) = context {
   generate-winner-display("GlyphWinnerX", 16cm, week-num, winner-username, winner-nickname, pos, image-dir)
 }
 
-#let generate-ambi-winner-display(week-num, winner-username, winner-nickname, pos, image-dir) = {
+#let generate-ambi-winner-display(week-num, winner-username, winner-nickname, pos, image-dir) = context {
   generate-winner-display("AmbiWinnerX", 18cm, week-num, winner-username, winner-nickname, pos, image-dir)
 }

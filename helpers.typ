@@ -232,42 +232,50 @@
 }
 
 /*
-returns a `box` containing a `par` (technically a `v-tight-par`) of the specified text, at the largest size it can be while fitting within the box
-
-more complex than the most naive methods (e.g. rendering text at an arbitrary size on an infinite canvas and then scaling it to fit in the box) because it takes into account word wrapping
+general function that takes a one-argument function (parameterised by size, returning content) and a maximum size, and does a binary search to find the largest size such that the output of the function fits within a box of the specified size; returns that function output
 */
-#let boxed-fitted-par(box-args, text-args, text-str, margin: 0cm, leading: 0.5em, max-size: 200pt) = {
-  let in-bounds = measurement => (
-    measurement.width < box-args.width - margin * 2 and measurement.height < box-args.height - margin * 2
-  )
-
-  let construct-par = (size, strict: false) => v-tight-par(
-    text-str,
-    box-args.width - margin * 2,
-    leading,
-    text-args + (size: size),
-    strict: strict,
-    max-height: box-args.height - margin * 2,
-  )
-
-  //binary search to find the largest text size that fits the box
+#let find-largest(fn, max-size, target-width, target-height) = {
   let upper-bound = max-size
   let lower-bound = 0pt
   let current-size = upper-bound / 2
-  let optimal-par = while true {
-    //we use the strict flag, so this will be `none` if the text is a really bad fit
-    let par = construct-par(current-size, strict: true)
-    if par != none and in-bounds(measure(par)) {
+  while true {
+    let output = fn(current-size)
+    if (
+      output != none
+        and {
+          let (width: width, height: height) = measure(output)
+          width < target-width and height < target-height
+        }
+    ) {
       lower-bound = current-size
       if upper-bound - lower-bound <= 0.1pt {
-        par
-        break
+        return output
       }
     } else {
       upper-bound = current-size
     }
     current-size = (upper-bound + lower-bound) / 2
   }
+}
+
+
+/*
+returns a `box` containing a `par` (technically a `v-tight-par`) of the specified text, at the largest size it can be while fitting within the box
+
+more complex than the most naive methods (e.g. rendering text at an arbitrary size on an infinite canvas and then scaling it to fit in the box) because it takes into account word wrapping
+*/
+#let boxed-fitted-par(box-args, text-args, text-str, margin: 0cm, leading: 0.5em, max-size: 200pt) = {
+  //we use the strict flag, so this will be `none` if the text is a really bad fit
+  let construct-par = size => v-tight-par(
+    text-str,
+    box-args.width - margin * 2,
+    leading,
+    text-args + (size: size),
+    strict: true,
+    max-height: box-args.height - margin * 2,
+  )
+
+  let optimal-par = find-largest(construct-par, max-size, box-args.width - margin * 2, box-args.height - margin * 2)
 
   box(
     ..box-args,
