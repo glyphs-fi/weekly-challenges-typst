@@ -234,7 +234,11 @@
     inset: 1cm,
     fill: glyph-bg,
     for (display-width, challenge) in ((16cm, "Glyph"), (18cm, "Ambi")) {
-      for (winner-name, pos) in (("the_uwuji", 1), ("nope", 2), ("狗", 3)) {
+      for (winner-username, winner-nickname, pos) in (
+        ("the_uwuji", "The Uwuji", 1),
+        ("nope", "nope", 2),
+        ("狗", "dog狗", 3),
+      ) {
         (
           align(
             center,
@@ -242,7 +246,8 @@
               challenge + "WinnerX",
               display-width,
               0,
-              winner-name,
+              winner-username,
+              winner-nickname,
               pos,
               "sample_images",
             )),
