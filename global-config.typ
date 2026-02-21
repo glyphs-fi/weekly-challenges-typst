@@ -2,10 +2,10 @@
 #let main-latin-font = "Stix Two Text"
 
 //regex that matches the given unicode scripts (and the Common script)
-#let scripts(..names) = {
+#let scripts-regex(..names, include-common: true) = {
   regex({
     "["
-    for name in (("Common",) + names.pos()).dedup() {
+    for name in (if include-common { ("Common",) } + names.pos()).dedup() {
       "\p{"
       name
       "}"
@@ -13,6 +13,12 @@
     "]"
   })
 }
+
+//vertical scripts that we support (in a basic way, not suitable for text that might line break)
+#let vertical-scripts = ("Mongolian", "Phags Pa")
+#let vertical-scripts-regex = scripts-regex(..vertical-scripts, include-common: false)
+#let has-vertical-script = str => str.match(vertical-scripts-regex) != none
+
 
 //used for glyph/ambigram display
 #let font-stack = {
@@ -84,6 +90,7 @@
     "Osmanya",
     "Vai",
     "Canadian Aboriginal",
+    "Mongolian",
   )
   //scripts that are fully supported by a Noto Serif font with the script in its name
   let noto-serif-supports = ("Georgian", "Makasar")
@@ -104,7 +111,7 @@
   while font-stack.len() > 0 {
     let (script-name, font-names) = (font-stack.pop(), font-stack.pop())
     for font-name in font-names {
-      ((name: font-name, covers: scripts(script-name)),)
+      ((name: font-name, covers: scripts-regex(script-name)),)
     }
   }
 }

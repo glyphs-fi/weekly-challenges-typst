@@ -52,6 +52,7 @@
   invert-badge-colours: true,
   primary-colour: palette.orange,
   max-item-size: 200pt,
+  line-break-suggestions: false,
   /* set dynamically
   suggestion-list,
   */
@@ -70,6 +71,7 @@
   invert-badge-colours: true,
   primary-colour: palette.orange,
   max-item-size: 35pt,
+  line-break-suggestions: true,
   /* set dynamically
   suggestion-list,
   */
@@ -100,11 +102,11 @@
     let between-item-margin = 0.7cm
     let frame-stroke = 0.1cm
 
-    let item-width = (grid-width - (num-cols + 1) * between-item-margin) / num-cols
-    let between-item-width = item-width + between-item-margin
+    let item-box-width = (grid-width - (num-cols + 1) * between-item-margin) / num-cols
+    let between-item-width = item-box-width + between-item-margin
 
-    let item-height = item-width / config.aspect-ratio
-    let between-item-height = item-height + between-item-margin
+    let item-box-height = item-box-width / config.aspect-ratio
+    let between-item-height = item-box-height + between-item-margin
 
     //construct all of the images, frames and labels, storing them for later
     let image-grid = for row in range(num-rows) {
@@ -117,8 +119,8 @@
       for col in range(items-in-row) {
         let item-num = (row * num-cols) + col
         let item-box-args = (
-          width: item-width,
-          height: item-height,
+          width: item-box-width,
+          height: item-box-height,
           stroke: frame-stroke + config.primary-colour,
         )
         let item-box = if "path-template" in config.keys() {
@@ -127,12 +129,12 @@
           let path-label = label(path)
 
           let img = image(path)
-          //will either be the image's natural dimensions, or (if too big) the largest dimensions it can render at within an `item-width` x `item-height` box
-          let img-render-dimensions = measure(img, height: item-height, width: item-width)
+          //will either be the image's natural dimensions, or (if too big) the largest dimensions it can render at within an `item-box-width` x `item-box-height` box
+          let img-render-dimensions = measure(img, height: item-box-height, width: item-box-width)
           //scale up images that are too small to fit the box
           let scale-factor = calc.min(
-            item-height / img-render-dimensions.height,
-            item-width / img-render-dimensions.width,
+            item-box-height / img-render-dimensions.height,
+            item-box-width / img-render-dimensions.width,
           )
           let scaled-width = img-render-dimensions.width * scale-factor
           let scaled-height = img-render-dimensions.height * scale-factor
@@ -145,8 +147,8 @@
           box(
             ..item-box-args,
             outset: (
-              x: (frame-stroke - (item-width - scaled-width)) / 2,
-              y: (frame-stroke - (item-height - scaled-height)) / 2,
+              x: (frame-stroke - (item-box-width - scaled-width)) / 2,
+              y: (frame-stroke - (item-box-height - scaled-height)) / 2,
             ),
             align(
               center + horizon,
@@ -154,24 +156,47 @@
             ),
           )
         } else if "suggestion-list" in config.keys() {
-          let inner-box-args = (
-            width: item-width * 0.9,
-            height: item-height * 0.9,
-          )
+          let suggestion-str = config.suggestion-list.at(item-num)
+          let item-box-margin = 30pt
+          let max-item-width = item-box-width - item-box-margin
+          let max-item-height = item-box-height - item-box-margin
+
           let text-args = (
             font: global-config.font-stack,
-            top-edge: "bounds",
-            bottom-edge: "bounds",
           )
           box(
             ..item-box-args,
-            align(center + horizon, helpers.boxed-fitted-par(
-              inner-box-args,
-              text-args,
-              config.suggestion-list.at(item-num),
-              margin: 10pt,
-              max-size: config.max-item-size,
-            )),
+            align(center + horizon, if config.line-break-suggestions {
+              //use a fancier algorithm for text that might line-break
+              helpers.boxed-fitted-par(
+                (width: max-item-width, height: max-item-height),
+                text-args,
+                suggestion-str,
+                margin: 0pt, //we've already factored it in
+                max-size: config.max-item-size,
+              )
+            } else {
+              let construct-text = size => {
+                let raw-text = text(
+                  ..text-args,
+                  size: size,
+                  suggestion-str,
+                  top-edge: "bounds",
+                  bottom-edge: "bounds",
+                )
+                //rotate vertical scripts
+                if global-config.has-vertical-script(suggestion-str) {
+                  raw-text = rotate(raw-text, 90deg, reflow: true)
+                }
+                raw-text
+              }
+              box(helpers.find-largest(
+                construct-text,
+                config.max-item-size,
+                max-item-width,
+                max-item-height,
+              ))
+            }),
           )
         }
 
@@ -284,12 +309,16 @@
     )
   } else {
     //circular badge
-    box(helpers.text-fitting-circ(
+    let fitted-text = helpers.text-fitting-circ(
       badge-text-str,
       badge-half-width,
       badge-text-min-margin,
       badge-text-args,
-    ))
+    )
+    if global-config.has-vertical-script(badge-text-str) {
+      fitted-text = rotate(fitted-text, 90deg, reflow: true)
+    }
+    box(fitted-text)
   }
 
   let badge-stroke = 0.2cm
@@ -502,51 +531,3 @@
   config += (suggestion-list: suggestion-list)
   generate-showcase("?", date, date, config, "")
 }
-
-//page exactly as big as its contents
-#set page(width: auto, height: auto, margin: 0pt)
-
-//to prevent automatic spacing between `block`s
-#set par(spacing: 0pt)
-
-//we always place objects relative to the topleft of their container
-#set place(top + left)
-#generate-glyph-suggestion-vote(datetime(day: 1, month: 11, year: 2023), (
-  "ɮ",
-  "ᜐ",
-  "𐤌",
-  "ꑷ",
-  "ܬ",
-  "𖬡𖬵",
-  "⅌",
-  "ᛃ",
-  "ឍ",
-  "爪",
-  "𐒁",
-  "ꙭ",
-  "கு",
-  "წ",
-  "ꕩ",
-  "Ѧ",
-  "𑻧",
-  "ᙢ",
-  " 🜏",
-  "Ⱆ",
-))
-#pagebreak()
-
-#generate-ambi-suggestion-vote(datetime(day: 1, month: 5, year: 2024), (
-  "punch",
-  "nightmare",
-  "[musical genre]",
-  "riddle",
-  "infinity",
-  "mirror",
-  "[lake]",
-  "asleep/awake",
-  "shout",
-  "myth",
-  "[Pokémon]",
-  "string",
-  "kijetesantakalu",
-))

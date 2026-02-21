@@ -11,6 +11,7 @@
   pangram-font-size: 20pt,
   announcement-text-weight: "regular",
   announcement-text-max-height: 3cm,
+  break-lines: false,
   /* set dynamically in `generate-glyph-announcement`
   primary-colour,
   background-colour,
@@ -24,6 +25,7 @@
   pangram-font-size: 20pt,
   announcement-text-weight: "bold",
   announcement-text-max-height: 2.5cm,
+  break-lines: true,
   primary-colour: palette.purple,
   background-colour: palette.purple,
   background-text-colour: palette.purplebg,
@@ -69,6 +71,11 @@
   )
   let date-dummy-text-height = measure(date-dummy-text).height
 
+  let announcement-text-max-height = config.announcement-text-max-height
+  //a bit hacky, but vertical scripts tend to be very skinny so we give them a bit more space to look nicer
+  if global-config.has-vertical-script(announcement-text-str) {
+    announcement-text-max-height *= 1.2
+  }
 
   let announcement-text-box = {
     let announcement-text-args = (
@@ -77,16 +84,42 @@
       weight: config.announcement-text-weight,
     )
 
-    let announcement-text-box-args = (
-      width: card-width - 2cm,
-      height: config.announcement-text-max-height,
-    )
+    let announcement-text-max-width = card-width - 2cm
 
-    helpers.boxed-fitted-par(
-      announcement-text-box-args,
-      announcement-text-args,
-      announcement-text-str,
-    )
+    if config.break-lines {
+      //use a more elaborate layout algorithm for text that might line break
+      let announcement-text-box-args = (
+        width: card-width - 2cm,
+        height: config.announcement-text-max-height,
+      )
+      helpers.boxed-fitted-par(
+        announcement-text-box-args,
+        announcement-text-args,
+        announcement-text-str,
+      )
+    } else {
+      let construct-text = size => {
+        let raw-text = text(
+          ..announcement-text-args,
+          announcement-text-str,
+          size: size,
+          top-edge: "bounds",
+          bottom-edge: "bounds",
+        )
+        //rotate vertical scripts
+        if global-config.has-vertical-script(announcement-text-str) {
+          raw-text = rotate(raw-text, 90deg, reflow: true)
+        }
+        raw-text
+      }
+      let max-text-size = 200pt
+      box(helpers.find-largest(
+        construct-text,
+        max-text-size,
+        announcement-text-max-width,
+        announcement-text-max-height,
+      ))
+    }
   }
 
   let footer-text = text(
@@ -107,7 +140,7 @@
   //therefore, typst 'sees' our text objects as being laid out on separate lines one after another, with bounding boxes flush to each other; the `dy` value for each text object positions it relative to this underlying position
   let title-text-dy = 1cm + global-config.tikz-inner-sep
   let date-text-dy = title-text-dy + 2 * global-config.tikz-inner-sep
-  let announcement-text-dy = date-text-dy + 2 * global-config.tikz-inner-sep + 4cm - config.announcement-text-max-height
+  let announcement-text-dy = date-text-dy + 2 * global-config.tikz-inner-sep + 4cm - announcement-text-max-height
 
   let main-rectangle = box(
     width: card-width,
