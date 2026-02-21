@@ -9,7 +9,7 @@ import "../utils.dart";
 Future<void> downloadArchivedFonts({
   required http.Client client,
   required Directory fontsDir,
-  required List<String> links,
+  required Iterable<String> links,
 }) async {
   for (final String link in links) {
     // Download the archive file

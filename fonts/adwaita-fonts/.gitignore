@@ -1,0 +1,9 @@
+# Ignore everything
+*
+# But don't ignore self
+!.gitignore
+# But don't ignore the fonts we want
+!mono/
+!mono/*.ttf
+# Also don't ignore the license, because that's important too
+!LICENSE

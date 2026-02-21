@@ -7,11 +7,16 @@ import "package:path/path.dart" as p;
 
 import "downloaders/archive.dart";
 import "downloaders/direct.dart";
+import "downloaders/gitlab.dart";
 import "downloaders/google_fonts.dart";
 
 final List<String> googleFontsLinks = [
   "https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400..700;1,400..700",
   "https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400..900",
+];
+
+final List<String> gitlabReleasesFontsLinks = [
+  "https://gitlab.gnome.org/GNOME/adwaita-fonts",
 ];
 
 //<Directory Name, Font Links>
@@ -32,6 +37,8 @@ Future<void> main(List<String> args) async {
   final Directory fontsDir = Directory(p.normalize(p.join(Platform.script.toFilePath(), "..", "..", "fonts")));
 
   await downloadFromGoogleFonts(client: client, fontsDir: fontsDir, links: googleFontsLinks);
+
+  await downloadFromGitLab(client: client, fontsDir: fontsDir, links: gitlabReleasesFontsLinks);
 
   await downloadDirectFonts(client: client, fontsDir: fontsDir, links: directFontsLinks);
 
