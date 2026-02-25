@@ -7,11 +7,11 @@ the latest versions of all the fonts we need into the `../fonts` directory.
 
 To add new fonts to the downloader, open `fonts_downloader.dart` and find
 the `List`s and `Map`s at the top.  
-You can add new links to those and the re-run the script to download them.
+You can add new links to those and then re-run the script to download them.
 
 If the download came with more than we need, please copy a `.gitignore` file
 from one of the other font directories and modify it to ignore everything,
-except the exact files we need (plus the license).
+except the exact files we need (plus the licence).
 
 ## Running
 
