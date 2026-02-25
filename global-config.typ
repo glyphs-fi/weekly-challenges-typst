@@ -51,7 +51,7 @@
     ), //note that every other font in the list is also used for {Common} chars, so anything not supported by the above may be supported by something below
     "Latin",
     (
-      (name: "Stix Two Text", src: "gfonts"), //all of [Basic Latin], [Latin Extended-A]; basic IPA; some misc Latin
+      (name: "STIX Two Text", src: "gfonts"), //all of [Basic Latin], [Latin Extended-A]; basic IPA; some misc Latin
       (name: "Noto Serif", src: "gfonts"), //all of [Latin Extended-{B,C,E,F}], [Phonetic Extensions{, Supplements}]; most of [Latin Extended-{D,G}]
       (
         name: "FreeSerif",
@@ -144,6 +144,10 @@
     (
       (name: "Noto Sans EgyptHiero", src: ("gfonts", "Noto Sans Egyptian Hieroglyphs")), //(currently) missing [Egyptian Hieroglyphs Extended-A]
     ),
+    "Nko",
+    (
+      (name: "Noto Sans NKo", src: "gfonts"),
+    ),
   )
 
   //scripts that are fully supported by a Noto Sans font with the script in its name
@@ -169,7 +173,6 @@
     "Osage",
     "Mongolian",
     "Cuneiform",
-    "Nko",
     "Devanagari",
     "Oriya",
     "Cherokee",
