@@ -272,7 +272,7 @@
 }
 
 //used for the dart download script
-#let fonts-download-json = json.encode(
+#let fonts-download-json = (
   fonts-info
     .map(x => filter-keys(x, ("name", "src"))) //keep only the keys we need
     .sorted(key: x => (x.name, -x.keys().len())) //sort alphabetically for aesthetics, and simultaneously sort duplicate entries in descending order by number of keys. if a font is specified multiple times and only one instance has a `src`, this will put that instance first
