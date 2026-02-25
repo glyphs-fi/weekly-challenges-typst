@@ -23,7 +23,7 @@
 )
 
 #context {
-  let test-glyphs = ("牛", "Æ", "﷽", "o̦")
+  let test-glyphs = ("牛", "Æ", "﷽", "o̦", "ᠰᠠᠷ")
   let test-ambis = (
     "short",
     "kinda long",
@@ -33,7 +33,7 @@
     "AAAAAAAAAAAAAAAAAAAAAAAAAAA",
   )
   let test-glyph-suggestions = (
-    "ɮ",
+    "ꡂ",
     "ᜐ",
     "𐤌",
     "ꑷ",
@@ -51,7 +51,7 @@
     "Ѧ",
     "𑻧",
     "ᙢ",
-    " 🜏",
+    "🜏",
     "Ⱆ",
   )
   let test-ambi-suggestions = (
