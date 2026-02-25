@@ -19,24 +19,52 @@
 #let vertical-scripts-regex = scripts-regex(..vertical-scripts, include-common: false)
 #let has-vertical-script = str => str.match(vertical-scripts-regex) != none
 
+//all the info about the fonts we're using; used to generate multiple lists. the final format of this will be a list of dicts with keys `name`, `src`, `covers`.
+#let fonts-info = {
+  /*
+  first, manually entered info. the general format here is (script, font-list, script, font-list, ...). in a font list, each font is specified by either just a string (its name) or a dict (with keys `name` and `src`). `src` is itself either a string OR a list (can be read like a rust enum; first entry (a string) specifies the type, further entries specifies additional information if that is needed) OR a list of lists, each of which is of the previously mentioned format (for multiple sources).
 
-//used for glyph/ambigram display
-#let font-stack = {
-  let font-stack = (
+  specifically, the src types are:
+   * "gfonts" (google fonts; url will be inferred from family name. optionally a second string can be given which specifies the family name that should be used for the url, just in case this is different from the name we refer to it by)
+   * "gitlab" (second string is a full url, since gitlab can be self-hosted so we can't assume the domain. optionally, a list of strings each of which is a path (possibly including globs) can be provided as a third argument, which specifies what we want to keep from the download
+   * "url" (second string is url to a direct download. a list of paths can also be given as above).
+   * "proxy" (i couldn't think of a better name for this option; it means that instead of specifying a source for this font, we specify another font name whose source should be used instead. the motivating example is Source Han Sans; it's distributed as a set of `.ttc` files, which are font "collections" that contain multiple fonts, so that multiple font names share the same source).
+
+  if we use the same font multiple times in the list, we don't need to specify the src every time (hence why we can just give a string). at least one occurrence of a font should have a src specified
+  */
+  let fonts-info = (
     //the following comments use [] to identify blocks and {} to identify scripts
+    //TODO: there are some fonts we could rename here if https://github.com/typst/typst/issues/7468 is fixed
     "Common",
     (
-      "Noto Sans Symbols",
-    ), // a lot of {Common} will be covered by various other fonts, so we don't seek full coverage here
+      (name: "Noto Sans Symbols", src: "gfonts"), //[Alchemical Symbols], [Enclosed Alphanumerics], some [Miscellaneous Symbols]
+      (name: "Noto Sans Symbols 2", src: "gfonts"), //[Yijing Hexagram Symbols], lots of numerals, [Mahjong Tiles], [Chess Symbols], many more things
+      (
+        name: "Twitter Color Emoji",
+        src: (
+          "url",
+          "https://github.com/13rac1/twemoji-color-font/releases/download/v15.1.0/TwitterColorEmoji-SVGinOT-15.1.0.zip",
+        ),
+      ), //[Miscellaneous Symbols and Pictographs], [Emoticons], [Supplemental Symbols and Pictographs], [Symbols and Pictographs Extended-A], wow unicode could really come up with better names
+      (name: "Noto Music", src: "gfonts"), //[Byzantine Musical Symbols], [Musical Symbols], [Ancient Greek Musical Notation]
+      (name: "Noto Sans Math", src: "gfonts"), //[Arrows], [Mathematical Operators], [Geometric Shapes], [Miscellaneous Mathematical Symbols-{A,B}], [Supplemental Arrows-{A,B}], [Mathematical Alphanumeric Symbols], [Arabic Mathematical Alphabetic Symbols]
+    ), //note that every other font in the list is also used for {Common} chars, so anything not supported by the above may be supported by something below
     "Latin",
     (
-      "Stix Two Text", //all of [Basic Latin], [Latin Extended-A]; basic IPA; some misc Latin
-      "Noto Serif", //all of [Latin Extended-{B,C,E,F}], [Phonetic Extensions{, Supplements}]; most of [Latin Extended-{D,G}]
-      "FreeSerif", //roman numerals in [Number Forms]
-      "Adwaita Mono", //most of remaining part of [Latin Extended-D]
+      (name: "Stix Two Text", src: "gfonts"), //all of [Basic Latin], [Latin Extended-A]; basic IPA; some misc Latin
+      (name: "Noto Serif", src: "gfonts"), //all of [Latin Extended-{B,C,E,F}], [Phonetic Extensions{, Supplements}]; most of [Latin Extended-{D,G}]
+      (
+        name: "FreeSerif",
+        src: (
+          "url",
+          "https://ftp.gnu.org/gnu/freefont/freefont-otf-20120503.tar.gz",
+          ("FreeSerif*.otf", "COPYING", "README"),
+        ),
+      ), //roman numerals in [Number Forms]
+      (name: "Adwaita Mono", src: ("gitlab", "https://gitlab.gnome.org/adwaita-fonts", ("mono/*.ttf", "LICENSE"))), //most of remaining part of [Latin Extended-D]
       "Plangothic P2", //remaining part of [Latin Extended-G]
-      "Noto Sans CJK TC", //fullwidth latin chars in [Halfwidth and Fullwidth Forms]
-    ), //script complete except for U+A7D2 LATIN CAPITAL LETTER DOUBLE THORN, U+A7D4 LATIN CAPITAL LETTER DOUBLE WYNN (from [Latin Extended-D])
+      "思源黑體", //"Source Han Sans TC"; fullwidth latin chars in [Halfwidth and Fullwidth Forms]
+    ), //script complete except for U+A7D2 LATIN CAPITAL LETTER DOUBLE THORN, U+A7D4 LATIN CAPITAL LETTER DOUBLE WYNN (from [Latin Extended-D]), a couple others
     "Greek",
     (
       "Noto Serif", //all of {Greek} except Ancient Greek numbers + musical symbols
@@ -46,75 +74,297 @@
     "Cyrillic",
     (
       "Noto Serif", //all of {Cyrillic} except [Cyrillic Extensions-D]
-      "Iosevka", //all of [Cyrillic Extensions-D]
-    ), //script complete
+    ), //script complete except for some mostly modifier letters in [Cyrillic Extensions-D]
     "Han",
     (
-      "Noto Sans CJK TC", //all of [CJK Unified Ideographs{, Extension A}] + misc
-      "Plangothic P1", //all of [CJK Unified Ideographs Extension {B,C,D,E,F,I}]
-      "Plangothic P2", //all of [CJK Unified Ideographs Extension {G,H,J}]
+      (
+        name: "思源黑體",
+        src: (
+          ("url", "https://github.com/adobe-fonts/source-han-sans/blob/release/OTC/SourceHanSans-Regular.ttc"),
+          ("url", "https://github.com/adobe-fonts/source-han-sans/blob/release/OTC/SourceHanSans-Bold.ttc"),
+        ),
+      ), //"Source Han Sans TC"; all of [CJK Unified Ideographs{, Extension A}] + misc
+      (
+        name: "Plangothic P1",
+        src: (
+          "url",
+          "https://github.com/Fitzgerald-Porthmouth-Koenigsegg/Plangothic_Project/releases/latest/download/PlangothicP1-Regular.ttf",
+        ),
+      ), //all of [CJK Unified Ideographs Extension {B,C,D,E,F,I}]
+      (
+        name: "Plangothic P2",
+        src: (
+          "url",
+          "https://github.com/Fitzgerald-Porthmouth-Koenigsegg/Plangothic_Project/releases/latest/download/PlangothicP2-Regular.ttf",
+        ),
+      ), //all of [CJK Unified Ideographs Extension {G,H,J}]
+    ), //script complete
+    "Hiragana",
+    (
+      (name: "Noto Serif CJK JP", src: ("gfonts", "Noto Serif Japanese")), //bit of a waste for just the kana; we could subset but i don't really know how
+      (name: "Noto Serif Hentaigana", src: "gfonts"),
+    ), //pretty much everything, nobody cares about U+1B11F HIRAGANA LETTER ARCHAIC WU
+    "Katakana",
+    (
+      "Noto Serif CJK JP",
+      "Noto Serif Hentaigana", //for some reason there are a couple katakana in this font?
+    ), //everything but the taiwanese tone stuff and some small letters
+    "Bopomofo",
+    (
+      "思源黑體", //"Source Han Sans TC"
+    ), //missing a few charas in [Bopomofo Extended] but i don't wanna pull another font just for them
+    "Hangul",
+    (
+      (name: "Source Han Sans K", src: ("proxy", "思源黑體")),
     ), //script complete
     "Tangut",
     (
-      "唐兀銀川", //"Tangut Yinchuan"; everything
+      (name: "唐兀銀川", src: ("url", "https://www.babelstone.co.uk/Fonts/Download/TangutYinchuan.ttf")), //"Tangut Yinchuan"
     ), //script complete
     "Syriac",
     (
-      "Noto Sans Syriac", //supports everything except [Syriac Supplement]
+      (name: "Noto Sans Syriac", src: "gfonts"), //supports everything except [Syriac Supplement]
       "Plangothic P2", //gotta love comprehensive fonts
     ), //script complete
     "Runic",
     (
-      "Babelstone Runic",
+      (name: "Babelstone Runic", src: ("url", "https://www.babelstone.co.uk/Fonts/Download/BabelStoneRunic.ttf")),
     ), //script complete
     "Tamil",
     (
-      "Noto Sans Tamil",
-      "Noto Sans Tamil Supplement", //they put [Tamil Supplement] in a different font for some reason
+      (name: "Noto Sans Tamil", src: "gfonts"),
+      (name: "Noto Sans Tamil Supplement", src: "gfonts"), //they put [Tamil Supplement] in a different font for some reason
     ), //script complete
     "Glagolitic",
     (
-      "Noto Sans Glagolitic", //everything except literally two characters (U+2C2F, U+2C5F)
+      (name: "Noto Sans Glagolitic", src: "gfonts"), //everything except literally two characters (U+2C2F, U+2C5F)
       "Plangothic P2", //to the rescue again
     ), //script complete
+    "Egyptian Hieroglyphs",
+    (
+      (name: "Noto Sans EgyptHiero", src: ("gfonts", "Noto Sans Egyptian Hieroglyphics")), //(currently) missing [Egyptian Hieroglyphs Extended-A]
+    ),
   )
 
   //scripts that are fully supported by a Noto Sans font with the script in its name
   let noto-sans-supports = (
     "Yi",
+    "Arabic", //minus some obscure stuff in [Arabic Presentation Forms A], [Arabic Extended-C] that i don't have a single font for
+    "Tifinagh",
+    "Bamum",
+    "Sinhala",
+    "Javanese",
+    "Ethiopic",
+    "Soyombo",
     "Pahawh Hmong",
     "Phoenician",
     "Tagalog",
     "Coptic",
     "Khmer",
+    "Lepcha",
+    "Thaana",
     "Osmanya",
     "Vai",
     "Canadian Aboriginal",
+    "Osage",
     "Mongolian",
+    "Cuneiform",
+    "Nko",
+    "Devanagari",
+    "Oriya",
+    "Cherokee",
+    "Kharoshthi",
+    "Linear A",
+    "Linear B",
+    "Ol Chiki",
+    "Cham",
+    "Manichaean",
+    "Saurashtra",
+    "Old Hungarian",
+    "Armenian",
+    "New Tai Lue",
+    "Inscriptional Parthian",
+    "Nushu",
+    "Palmyrene",
+    "Lao",
+    "Gurmukhi",
+    "Limbu",
+    "Tai Viet",
+    "Kannada", //technically missing one archaic char
+    "Telugu", //ditto
+    "Balinese", //missing U+1B4E, U+1B4F, U+1B7F. i don't have fonts for them
+    "Vai",
+    "Shavian",
+    "Deseret",
+    "Adlam",
+    "Gothic",
+    "Grantha",
   )
   //scripts that are fully supported by a Noto Serif font with the script in its name
-  let noto-serif-supports = ("Georgian", "Makasar")
+  let noto-serif-supports = ("Georgian", "Makasar", "Tibetan")
   for script in noto-sans-supports {
-    font-stack.push(script)
-    font-stack.push(("Noto Sans " + script,))
+    fonts-info.push(script)
+    fonts-info.push(((name: "Noto Sans " + script, src: "gfonts"),))
   }
   for script in noto-serif-supports {
-    font-stack.push(script)
-    font-stack.push(("Noto Serif " + script,))
+    fonts-info.push(script)
+    fonts-info.push(((name: "Noto Serif " + script, src: "gfonts"),))
   }
 
-  //ridiculous codegolf version of the below code that i couldn't resist writing
-  //font-stack.fold((),(a,x)=>(a+=if""in x{(x,)}else{x.map(((..a,x)=a)+f=>(name:f,covers:scripts(x)))})+a)
+  //anything we want to insert after everything else, so that it has the lowest priority in the font stack
+  let final-insertions = (
+    "Common",
+    (
+      (
+        name: "Fairfax HD",
+        src: ("url", "https://github.com/kreativekorp/open-relay/releases/latest/download/FairfaxHD.zip"),
+      ), //supports [Symbols for Legacy Computing{, Supplement}], [Tags], [Supplemental Arrows-C] and lots of other things. actually it supports *too* many things, so we'd like it to have low priority. for instance, it supports ⁂ (U+2042 ASTERISM from [General Punctuation], script {Common}) but with a poor glyph; we'd rather Noto Serif picks this up instead
+    ),
+    "Private Use",
+    (
+      //mostly (U)CSUR fonts here
+      (
+        name: "Alcarin Tengwar",
+        src: (
+          ("url", "https://github.com/Tosche/Alcarin-Tengwar/blob/main/Fonts%20Static/AlcarinTengwar-Regular.ttf"),
+          ("url", "https://github.com/Tosche/Alcarin-Tengwar/blob/main/Fonts%20Static/AlcarinTengwar-Bold.ttf"),
+        ),
+      ), //tengwar
+      "Fairfax HD", //bascially everything else in UCSUR, incl. sitelen pona, D'ni, Standard Galactic Alphabet, etc
+    ),
+  )
+  fonts-info += final-insertions
+
 
   //we reverse and then take elements from the back with .pop(), so we end up taking them in the correct order
-  font-stack = font-stack.rev()
-  while font-stack.len() > 0 {
-    let (script-name, font-names) = (font-stack.pop(), font-stack.pop())
-    for font-name in font-names {
-      ((name: font-name, covers: scripts-regex(script-name)),)
+  fonts-info = fonts-info.rev()
+  while fonts-info.len() > 0 {
+    let (script-name, font-list) = (fonts-info.pop(), fonts-info.pop())
+    for font-data in font-list {
+      (
+        if type(font-data) == str { (name: font-data) } else { font-data } + (covers: scripts-regex(script-name)),
+      )
     }
   }
 }
+
+//helper function to strip unnecessary keys from dictionaries
+#let filter-keys(dict, to-keep) = {
+  for key in dict.keys() {
+    if key not in to-keep {
+      //suppress return value
+      let _ = dict.remove(key)
+    }
+  }
+  dict
+}
+
+//used to pick what font we use for what script
+#let font-stack = fonts-info.map(x => filter-keys(x, ("name", "covers")))
+
+#let generate-gfonts-link = name => {
+  let encoded = name.replace(" ", "+")
+  "https://fonts.googleapis.com/css2?family=" + encoded + ":ital,wght@0,400..700;1,400..700"
+}
+
+#let generate-github-link = path => {
+  "https://github.com/" + path
+}
+
+//used for the dart download script
+#let fonts-download-json = json.encode(
+  fonts-info
+    .map(x => filter-keys(x, ("name", "src"))) //keep only the keys we need
+    .sorted(key: x => (x.name, -x.keys().len())) //sort alphabetically for aesthetics, and simultaneously sort duplicate entries in descending order by number of keys. if a font is specified multiple times and only one instance has a `src`, this will put that instance first
+    .dedup(key: x => x.name) //keep only the first instance of a font name. thanks to the previous step, this is the one that has a src
+    .map(x => {
+      //pre-processing step: replace "proxy" type sources with dummy entries that have only a name. if the font is specified elsewhere in the list (which it should be) then this dummy entry will be removed by the second `dedup` we do after this step. otherwise, we will get a font with no `src` making it to the final processing step, which will be caught and create an error there. this is how we error-check the "proxy" field
+      if "src" in x.keys() {
+        if type(x.src) == array {
+          if x.src.at(0) == "proxy" {
+            return (name: x.src.at(1))
+          }
+        }
+      }
+      x
+    })
+    .sorted(key: x => (x.name, -x.keys().len())) //sort and dedup again...
+    .dedup(key: x => x.name) //because the previous step can create duplicates
+    .map(x => {
+      //final pre-processing step: split multi-source entries into multiple entries. after this stage, there will actually be intentional duplicates in the list, so we don't dedup again
+      if "src" in x.keys() {
+        let src = x.src
+        if type(src.at(0)) == array {
+          //array of arrays; split it into multiple entries
+          return for y in src {
+            ((name: x.name, src: y),)
+          }
+        }
+      }
+      x
+    })
+    .flatten() //separate the multiple entries created by the previous step
+    .map(x => //add a url to the font, determined from its `src` info
+    (
+      x
+        + {
+          let name = x.name
+          if "src" in x.keys() {
+            let src = x.src
+            if type(src) == str {
+              //only one string specified; currently there is only one case where this is valid
+              if src == "gfonts" {
+                (url: generate-gfonts-link(name))
+              } else {
+                panic("Invalid `src` for font " + name + ": `" + src + "`.")
+              }
+            } else if type(src) == array {
+              let src-type = src.at(0)
+              (
+                if src.len() < 2 {
+                  panic("Invalid `src` for font " + name + "; array given but second argument missing.")
+                } else {
+                  let data = src.at(1)
+                  if src-type == "gfonts" {
+                    (url: generate-gfonts-link(data))
+                  } else if src-type == "github" {
+                    (url: generate-github-link(data))
+                  } else if src-type in ("url", "gitlab") {
+                    (url: data)
+                  } else {
+                    panic("Invalid source type for font " + name + ": " + src-type + ".")
+                  }
+                }
+                  + if src.len() >= 3 {
+                    //if a third argument is given, it should be a list of files to keep
+                    if type(src.at(2)) == array {
+                      (keep: src.at(2))
+                    } else {
+                      panic("Invalid keep value for font " + name + ": " + src.at(2))
+                    }
+                  }
+              )
+            } else {
+              panic("Invalid data type for `src` for font " + name + ".")
+            }
+          } else {
+            panic("Missing `src` for font " + name + ".")
+          }
+        }
+    ))
+    .map(
+      //we don't need detailed `src` info anymore, so just keep the src type
+      x => {
+        if "src" in x.keys() {
+          if type(x.src) == array {
+            return x + (src: x.src.at(0))
+          }
+        }
+        x
+      },
+    ),
+)
+#metadata(fonts-download-json) <fonts-download-json>
 
 //drop shadow config
 #let drop-shadow-size = 0.1cm
