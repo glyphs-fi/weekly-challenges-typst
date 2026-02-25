@@ -42,7 +42,7 @@
       (
         name: "Twitter Color Emoji",
         src: (
-          "url",
+          "archive",
           "https://github.com/13rac1/twemoji-color-font/releases/download/v15.1.0/TwitterColorEmoji-SVGinOT-15.1.0.zip",
         ),
       ), //[Miscellaneous Symbols and Pictographs], [Emoticons], [Supplemental Symbols and Pictographs], [Symbols and Pictographs Extended-A], wow unicode could really come up with better names
@@ -56,7 +56,7 @@
       (
         name: "FreeSerif",
         src: (
-          "url",
+          "archive",
           "https://ftp.gnu.org/gnu/freefont/freefont-otf-20120503.tar.gz",
           ("FreeSerif*.otf", "COPYING", "README"),
         ),
@@ -101,7 +101,7 @@
     ), //script complete
     "Hiragana",
     (
-      (name: "Noto Serif CJK JP", src: ("gfonts", "Noto Serif Japanese")), //bit of a waste for just the kana; we could subset but i don't really know how
+      (name: "Noto Serif CJK JP", src: ("gfonts", "Noto Serif JP")), //bit of a waste for just the kana; we could subset but i don't really know how
       (name: "Noto Serif Hentaigana", src: "gfonts"),
     ), //pretty much everything, nobody cares about U+1B11F HIRAGANA LETTER ARCHAIC WU
     "Katakana",
@@ -217,7 +217,7 @@
     (
       (
         name: "Fairfax HD",
-        src: ("url", "https://github.com/kreativekorp/open-relay/releases/latest/download/FairfaxHD.zip"),
+        src: ("archive", "https://github.com/kreativekorp/open-relay/releases/latest/download/FairfaxHD.zip"),
       ), //supports [Symbols for Legacy Computing{, Supplement}], [Tags], [Supplemental Arrows-C] and lots of other things. actually it supports *too* many things, so we'd like it to have low priority. for instance, it supports ⁂ (U+2042 ASTERISM from [General Punctuation], script {Common}) but with a poor glyph; we'd rather Noto Serif picks this up instead
     ),
     "Private Use",
@@ -329,7 +329,7 @@
                     (url: generate-gfonts-link(data))
                   } else if src-type == "github" {
                     (url: generate-github-link(data))
-                  } else if src-type in ("url", "gitlab") {
+                  } else if src-type in ("url", "gitlab", "archive") {
                     (url: data)
                   } else {
                     panic("Invalid source type for font " + name + ": " + src-type + ".")
