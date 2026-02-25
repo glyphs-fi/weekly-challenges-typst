@@ -16,7 +16,7 @@ Future<void> downloadDirectFonts({
     final List<String> links = entry.value;
 
     // Create directory for the font file(s)
-    final Directory fontDir = Directory(p.join(fontsDir.path, directoryName))..createSync();
+    final Directory fontDir = await createEmptyFontDir(fontsDir, directoryName: directoryName);
 
     // Download the font file(s) into the directory
     for (final String link in links) {

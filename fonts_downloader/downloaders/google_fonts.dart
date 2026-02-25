@@ -18,9 +18,15 @@ Future<void> downloadFromGoogleFonts({
     fontFiles.addAll(await _getFileLinksFromGoogleFontsLink(client, link));
   }
 
-  // Download all the font files into their family directory, with a nice name
+  // Create new empty directories for each font family
+  final Set<String> fontFamilies = fontFiles.map((e) => e.family).toSet();
+  for (final String fontFamily in fontFamilies) {
+    await createEmptyFontDir(fontsDir, directoryName: fontFamily);
+  }
+
+  // Download all the font files into the family directory that was created above, with a nice filename
   for (final fontFileDef in fontFiles) {
-    final Directory fontDir = Directory(p.join(fontsDir.path, fontFileDef.family))..createSync();
+    final Directory fontDir = Directory(p.join(fontsDir.path, fontFileDef.family));
     final String filename = "${fontFileDef.family}_${fontFileDef.weight}_${fontFileDef.style}${p.extension(fontFileDef.url)}";
 
     await downloadFile(client, url: fontFileDef.url, destinationPath: p.join(fontDir.path, filename));
