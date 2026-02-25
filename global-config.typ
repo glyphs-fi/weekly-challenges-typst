@@ -264,7 +264,7 @@
 
 #let generate-gfonts-link = name => {
   let encoded = name.replace(" ", "+")
-  "https://fonts.googleapis.com/css2?family=" + encoded + ":ital,wght@0,400..700;1,400..700"
+  "https://fonts.googleapis.com/css2?family=" + encoded + ":ital,wght@0,400;0,700;1,700"
 }
 
 #let generate-github-link = path => {
