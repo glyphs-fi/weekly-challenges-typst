@@ -142,7 +142,7 @@
     ), //script complete
     "Egyptian Hieroglyphs",
     (
-      (name: "Noto Sans EgyptHiero", src: ("gfonts", "Noto Sans Egyptian Hieroglyphics")), //(currently) missing [Egyptian Hieroglyphs Extended-A]
+      (name: "Noto Sans EgyptHiero", src: ("gfonts", "Noto Sans Egyptian Hieroglyphs")), //(currently) missing [Egyptian Hieroglyphs Extended-A]
     ),
   )
 
