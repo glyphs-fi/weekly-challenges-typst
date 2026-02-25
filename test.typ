@@ -23,7 +23,7 @@
 )
 
 #context {
-  let test-glyphs = ("牛", "Æ", "﷽", "o̦", "ᠰᠠᠷ")
+  let test-glyphs = ("牛", "Æ", "﷽", "o̦", "ᠰᠠᠷ", "")
   let test-ambis = (
     "short",
     "kinda long",
@@ -44,13 +44,13 @@
     "ឍ",
     "爪",
     "𐒁",
-    "ꙭ",
+    "ㄭ",
     "கு",
     "წ",
     "ꕩ",
-    "Ѧ",
-    "𑻧",
-    "ᙢ",
+    "󱦀",
+    "か",
+    "🤓",
     "🜏",
     "Ⱆ",
   )
@@ -73,12 +73,6 @@
   let glyph-bg = palette.this-week-bg(200)
   let ambi-bg = palette.purple
   let test-date = datetime(year: 2069, month: 4, day: 20)
-
-  /*box(
-    inset: 1cm,
-    fill: glyph-bg,
-    helpers.drop-shadowed-box(20cm, 9cm, text("hello"), fill: none),
-  )*/
 
   box(
     inset: 1cm,
