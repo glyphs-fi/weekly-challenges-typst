@@ -362,7 +362,7 @@
         }
         x
       },
-    ),
+    )
 )
 #metadata(fonts-download-json) <fonts-download-json>
 
