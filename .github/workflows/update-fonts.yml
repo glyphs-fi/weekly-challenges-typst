@@ -1,0 +1,21 @@
+name: Dart
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 0"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+      - name: Install dependencies
+        working-directory: fonts_downloader
+        run: dart pub get
+      - name: Run the downloader
+        working-directory: fonts_downloader
+        run: dart run fonts_downloader.dart
+      - name: Show git changes
+        run: git status
