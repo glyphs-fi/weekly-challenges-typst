@@ -28,5 +28,5 @@ jobs:
           git config user.email 'github-actions[bot]@users.noreply.github.com'
       - name: Git commit and push
         run: |
-          git -am "Updated fonts"
+          git commit -am "Updated fonts"
           git push
