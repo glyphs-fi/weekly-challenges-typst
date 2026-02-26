@@ -32,5 +32,6 @@ jobs:
         run: git status
       - name: Git commit and push
         run: |
+          [[ ! $(git diff-index HEAD --) ]] || { echo "No updates found. No push necessary."; exit 0; }
           git commit -am "Updated fonts"
           git push
