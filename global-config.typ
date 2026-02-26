@@ -35,21 +35,6 @@
   let fonts-info = (
     //the following comments use [] to identify blocks and {} to identify scripts
     //TODO: there are some fonts we could rename here if https://github.com/typst/typst/issues/7468 is fixed
-    "Common",
-    (
-      (name: "Noto Sans Symbols", src: "gfonts"), //[Alchemical Symbols], [Enclosed Alphanumerics], some [Miscellaneous Symbols]
-      (name: "Noto Sans Symbols 2", src: "gfonts"), //[Yijing Hexagram Symbols], lots of numerals, [Mahjong Tiles], [Chess Symbols], many more things
-      (
-        name: "Twitter Color Emoji",
-        src: (
-          "archive",
-          "https://github.com/13rac1/twemoji-color-font/releases/download/v15.1.0/TwitterColorEmoji-SVGinOT-15.1.0.zip",
-          ("LICENSE*", "*.ttf"),
-        ),
-      ), //[Miscellaneous Symbols and Pictographs], [Emoticons], [Supplemental Symbols and Pictographs], [Symbols and Pictographs Extended-A], wow unicode could really come up with better names
-      (name: "Noto Music", src: "gfonts"), //[Byzantine Musical Symbols], [Musical Symbols], [Ancient Greek Musical Notation]
-      (name: "Noto Sans Math", src: "gfonts"), //[Arrows], [Mathematical Operators], [Geometric Shapes], [Miscellaneous Mathematical Symbols-{A,B}], [Supplemental Arrows-{A,B}], [Mathematical Alphanumeric Symbols], [Arabic Mathematical Alphabetic Symbols]
-    ), //note that every other font in the list is also used for {Common} chars, so anything not supported by the above may be supported by something below
     "Latin",
     (
       (name: "STIX Two Text", src: "gfonts"), //all of [Basic Latin], [Latin Extended-A]; basic IPA; some misc Latin
@@ -73,6 +58,21 @@
       "Plangothic P2", //remaining part of [Latin Extended-G]
       "思源黑體", //"Source Han Sans TC"; fullwidth latin chars in [Halfwidth and Fullwidth Forms]
     ), //script complete except for U+A7D2 LATIN CAPITAL LETTER DOUBLE THORN, U+A7D4 LATIN CAPITAL LETTER DOUBLE WYNN (from [Latin Extended-D]), a couple others
+    "Common",
+    (
+      (name: "Noto Sans Symbols", src: "gfonts"), //[Alchemical Symbols], [Enclosed Alphanumerics], some [Miscellaneous Symbols]
+      (name: "Noto Sans Symbols 2", src: "gfonts"), //[Yijing Hexagram Symbols], lots of numerals, [Mahjong Tiles], [Chess Symbols], many more things
+      (
+        name: "Twitter Color Emoji",
+        src: (
+          "archive",
+          "https://github.com/13rac1/twemoji-color-font/releases/download/v15.1.0/TwitterColorEmoji-SVGinOT-15.1.0.zip",
+          ("LICENSE*", "*.ttf"),
+        ),
+      ), //[Miscellaneous Symbols and Pictographs], [Emoticons], [Supplemental Symbols and Pictographs], [Symbols and Pictographs Extended-A], wow unicode could really come up with better names
+      (name: "Noto Music", src: "gfonts"), //[Byzantine Musical Symbols], [Musical Symbols], [Ancient Greek Musical Notation]
+      (name: "Noto Sans Math", src: "gfonts"), //[Arrows], [Mathematical Operators], [Geometric Shapes], [Miscellaneous Mathematical Symbols-{A,B}], [Supplemental Arrows-{A,B}], [Mathematical Alphanumeric Symbols], [Arabic Mathematical Alphabetic Symbols]
+    ), //note that every other font in the list is also used for {Common} chars, so anything not supported by the above may be supported by something below
     "Greek",
     (
       "Noto Serif", //all of {Greek} except Ancient Greek numbers + musical symbols
