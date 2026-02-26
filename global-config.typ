@@ -59,12 +59,16 @@
         src: (
           "archive",
           "https://ftp.gnu.org/gnu/freefont/freefont-otf-20120503.tar.gz",
-          ("FreeSerif*.otf", "COPYING", "README"),
+          ("FreeSerif.otf", "FreeSerifBoldItalic.otf", "COPYING", "README"),
         ),
       ), //roman numerals in [Number Forms]
       (
         name: "Adwaita Mono",
-        src: ("gitlab", "https://gitlab.gnome.org/GNOME/adwaita-fonts", ("mono/*.ttf", "LICENSE")),
+        src: (
+          "gitlab",
+          "https://gitlab.gnome.org/GNOME/adwaita-fonts",
+          ("mono/AdwaitaMono-Regular.ttf", "mono/AdwaitaMono-BoldItalic.ttf", "LICENSE"),
+        ),
       ), //most of remaining part of [Latin Extended-D]
       "Plangothic P2", //remaining part of [Latin Extended-G]
       "思源黑體", //"Source Han Sans TC"; fullwidth latin chars in [Halfwidth and Fullwidth Forms]
