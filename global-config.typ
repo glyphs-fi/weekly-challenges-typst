@@ -153,11 +153,15 @@
     ), //script complete
     "Egyptian Hieroglyphs",
     (
-      (name: "Noto Sans EgyptHiero", src: ("gfonts", "Noto Sans Egyptian Hieroglyphs")), //(currently) missing [Egyptian Hieroglyphs Extended-A]
+      (name: "Noto Sans Egyptian Hieroglyphs", src: "gfonts"), //(currently) missing [Egyptian Hieroglyphs Extended-A]
     ),
     "Nko",
     (
       (name: "Noto Sans NKo", src: "gfonts"),
+    ),
+    "Phags Pa",
+    (
+      (name: "Noto Sans PhagsPa", src: "gfonts"),
     ),
   )
 
