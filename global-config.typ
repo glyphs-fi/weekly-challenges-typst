@@ -88,8 +88,11 @@
       (
         name: "思源黑體",
         src: (
-          ("url", "https://github.com/adobe-fonts/source-han-sans/blob/release/OTC/SourceHanSans-Regular.ttc"),
-          ("url", "https://github.com/adobe-fonts/source-han-sans/blob/release/OTC/SourceHanSans-Bold.ttc"),
+          (
+            "url",
+            "https://github.com/adobe-fonts/source-han-sans/raw/refs/heads/release/OTC/SourceHanSans-Regular.ttc",
+          ),
+          ("url", "https://github.com/adobe-fonts/source-han-sans/raw/refs/heads/release/OTC/SourceHanSans-Bold.ttc"),
         ),
       ), //"Source Han Sans TC"; all of [CJK Unified Ideographs{, Extension A}] + misc
       (
@@ -241,8 +244,14 @@
       (
         name: "Alcarin Tengwar",
         src: (
-          ("url", "https://github.com/Tosche/Alcarin-Tengwar/blob/main/Fonts%20Static/AlcarinTengwar-Regular.ttf"),
-          ("url", "https://github.com/Tosche/Alcarin-Tengwar/blob/main/Fonts%20Static/AlcarinTengwar-Bold.ttf"),
+          (
+            "url",
+            "https://github.com/Tosche/Alcarin-Tengwar/raw/refs/heads/main/Fonts%20Static/AlcarinTengwar-Regular.ttf",
+          ),
+          (
+            "url",
+            "https://github.com/Tosche/Alcarin-Tengwar/raw/refs/heads/main/Fonts%20Static/AlcarinTengwar-Bold.ttf",
+          ),
         ),
       ), //tengwar
       "Fairfax HD", //bascially everything else in UCSUR, incl. sitelen pona, D'ni, Standard Galactic Alphabet, etc
