@@ -1,17 +1,16 @@
 # Fonts Downloader
 
 This directory contains a Dart Script which automatically downloads
-the latest versions of all the fonts we need into the `../fonts` directory.
+the latest versions of all the fonts we need into the [`../fonts`](../fonts) directory.
 
 ## Adding fonts
 
-To add new fonts to the downloader, open `fonts_downloader.dart` and find
-the `List`s and `Map`s at the top.  
-You can add new links to those and then re-run the script to download them.
+To add new fonts to the downloader, edit [`global-config.typ`](../global-config.typ).
+You can add new fonts with links there and then re-run this script to download them.
 
-If the download came with more than we need, please copy a `.gitignore` file
-from one of the other font directories and modify it to ignore everything,
-except the exact files we need (plus the licence).
+If the download came with more than we need, please fill in the `keep` option
+with globs that list exactly the files we need to keep.
+Please also include the license files there.
 
 ## Running
 
