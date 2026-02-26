@@ -47,6 +47,7 @@ final RegExp _urlExtractor = RegExp(r"url\((.*?)\)", caseSensitive: false);
 
 Future<List<_GoogleFontFile>> _getFileLinksFromGoogleFontsLink(http.Client client, Uri url) async {
   final String cssContent = await client.read(url);
+  print("Read $url");
   final List<String> fontFaceBlocks = cssContent
       .split(RegExp(r"(?:/\*.*\*/\s*)?@font-face\s*"))
       .where((str) => str.trim().isNotEmpty)

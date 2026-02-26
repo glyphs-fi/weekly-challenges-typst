@@ -23,6 +23,7 @@ Future<void> downloadArchivedFonts({
 
     // Extract the archive file into the fonts directory
     await extractFileToDisk(archiveFile.path, fontDir.path);
+    print("Extracted ${archiveFile.path} to ${fontDir.path}");
 
     // Delete the archive file
     await archiveFile.delete();

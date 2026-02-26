@@ -25,6 +25,7 @@ Future<Directory> createEmptyFontDir(Directory fontsDir, {required String direct
 Future<void> downloadFile(http.Client client, {required Uri url, required String destinationPath}) async {
   // Download content into memory
   final Uint8List bytes = await client.readBytes(url);
+  print("Downloaded $url to $destinationPath");
 
   // Save content to file
   final File fontFile = File(destinationPath);

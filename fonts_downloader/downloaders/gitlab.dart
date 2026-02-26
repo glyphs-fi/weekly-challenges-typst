@@ -23,6 +23,7 @@ Future<void> downloadFromGitLab({
 
     // Actually do the API call
     final String jsonString = await client.read(apiUri);
+    print("Read $apiUri");
 
     // Decode the information from the API call
     final _Release gitlabRelease = _Release.fromJson(jsonDecode(jsonString) as Map<String, dynamic>);
