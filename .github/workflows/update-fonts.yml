@@ -22,3 +22,11 @@ jobs:
         run: dart run fonts_downloader.dart
       - name: Show git changes
         run: git status
+      - name: Setup git credentials for the GitHub Actions Bot
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+      - name: Git commit and push
+        run: |
+          git -am "Updated fonts"
+          git push
