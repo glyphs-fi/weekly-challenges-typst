@@ -1,4 +1,4 @@
-name: Dart
+name: Update Fonts
 
 on:
   workflow_dispatch:
