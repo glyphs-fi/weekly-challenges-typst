@@ -20,12 +20,13 @@ jobs:
       - name: Run the downloader
         working-directory: fonts_downloader
         run: dart run fonts_downloader.dart
-      - name: Show git changes
-        run: git status
       - name: Setup git credentials for the GitHub Actions Bot
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git config core.quotepath off  # For rendering non-ASCII characters nicely in the upcoming git status
+      - name: Show git changes
+        run: git status
       - name: Git commit and push
         run: |
           git commit -am "Updated fonts"
