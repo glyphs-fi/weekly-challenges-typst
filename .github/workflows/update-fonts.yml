@@ -10,7 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dart-lang/setup-dart@v1
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+      - name: Setup Typst
+        uses: typst-community/setup-typst@v4
       - name: Install dependencies
         working-directory: fonts_downloader
         run: dart pub get
