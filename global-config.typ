@@ -44,6 +44,7 @@
         src: (
           "archive",
           "https://github.com/13rac1/twemoji-color-font/releases/download/v15.1.0/TwitterColorEmoji-SVGinOT-15.1.0.zip",
+          ("LICENSE*", "*.ttf"),
         ),
       ), //[Miscellaneous Symbols and Pictographs], [Emoticons], [Supplemental Symbols and Pictographs], [Symbols and Pictographs Extended-A], wow unicode could really come up with better names
       (name: "Noto Music", src: "gfonts"), //[Byzantine Musical Symbols], [Musical Symbols], [Ancient Greek Musical Notation]
