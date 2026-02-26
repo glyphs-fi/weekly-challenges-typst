@@ -22,8 +22,8 @@ jobs:
         run: dart run fonts_downloader.dart
       - name: Setup git credentials for the GitHub Actions Bot
         run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config core.quotepath off  # For rendering non-ASCII characters nicely in the upcoming git status
       - name: Show git changes
         run: git status
