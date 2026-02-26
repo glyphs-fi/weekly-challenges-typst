@@ -1,0 +1,14 @@
+name: fonts_downloader
+
+environment:
+  sdk: '^3.10.1'
+
+dependencies:
+  archive: ^4.0.9
+  glob: ^2.1.3
+  http: ^1.6.0
+  path: ^1.9.1
+
+dev_dependencies:
+  very_good_analysis: ^10.0.0
+
