@@ -101,12 +101,12 @@
     ), //script complete
     "Hiragana",
     (
-      (name: "Noto Serif CJK JP", src: ("gfonts", "Noto Serif JP")), //bit of a waste for just the kana; we could subset but i don't really know how
+      (name: "Noto Serif JP", src: "gfonts"), //bit of a waste for just the kana; we could subset but i don't really know how
       (name: "Noto Serif Hentaigana", src: "gfonts"),
     ), //pretty much everything, nobody cares about U+1B11F HIRAGANA LETTER ARCHAIC WU
     "Katakana",
     (
-      "Noto Serif CJK JP",
+      "Noto Serif JP",
       "Noto Serif Hentaigana", //for some reason there are a couple katakana in this font?
     ), //everything but the taiwanese tone stuff and some small letters
     "Bopomofo",
@@ -220,7 +220,11 @@
     (
       (
         name: "Fairfax HD",
-        src: ("archive", "https://github.com/kreativekorp/open-relay/releases/latest/download/FairfaxHD.zip"),
+        src: (
+          "archive",
+          "https://github.com/kreativekorp/open-relay/releases/latest/download/FairfaxHD.zip",
+          ("FairfaxHD.ttf", "OFL.txt"),
+        ),
       ), //supports [Symbols for Legacy Computing{, Supplement}], [Tags], [Supplemental Arrows-C] and lots of other things. actually it supports *too* many things, so we'd like it to have low priority. for instance, it supports ⁂ (U+2042 ASTERISM from [General Punctuation], script {Common}) but with a poor glyph; we'd rather Noto Serif picks this up instead
     ),
     "Private Use",
