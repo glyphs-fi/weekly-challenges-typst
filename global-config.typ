@@ -62,7 +62,10 @@
           ("FreeSerif*.otf", "COPYING", "README"),
         ),
       ), //roman numerals in [Number Forms]
-      (name: "Adwaita Mono", src: ("gitlab", "https://gitlab.gnome.org/adwaita-fonts", ("mono/*.ttf", "LICENSE"))), //most of remaining part of [Latin Extended-D]
+      (
+        name: "Adwaita Mono",
+        src: ("gitlab", "https://gitlab.gnome.org/GNOME/adwaita-fonts", ("mono/*.ttf", "LICENSE")),
+      ), //most of remaining part of [Latin Extended-D]
       "Plangothic P2", //remaining part of [Latin Extended-G]
       "思源黑體", //"Source Han Sans TC"; fullwidth latin chars in [Halfwidth and Fullwidth Forms]
     ), //script complete except for U+A7D2 LATIN CAPITAL LETTER DOUBLE THORN, U+A7D4 LATIN CAPITAL LETTER DOUBLE WYNN (from [Latin Extended-D]), a couple others
