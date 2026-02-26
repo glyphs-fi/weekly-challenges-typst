@@ -223,7 +223,7 @@
         src: (
           "archive",
           "https://github.com/kreativekorp/open-relay/releases/latest/download/FairfaxHD.zip",
-          ("FairfaxHD.ttf",),
+          ("FairfaxHD.ttf", "OFL.txt"),
         ),
       ), //supports [Symbols for Legacy Computing{, Supplement}], [Tags], [Supplemental Arrows-C] and lots of other things. actually it supports *too* many things, so we'd like it to have low priority. for instance, it supports ⁂ (U+2042 ASTERISM from [General Punctuation], script {Common}) but with a poor glyph; we'd rather Noto Serif picks this up instead
     ),
