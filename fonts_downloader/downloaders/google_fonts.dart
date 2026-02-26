@@ -3,33 +3,40 @@ import "dart:io";
 import "package:http/http.dart" as http;
 import "package:path/path.dart" as p;
 
+import "../input_parsing.dart";
 import "../utils.dart";
 
-typedef _GoogleFontFile = ({String family, String style, String weight, String url});
+typedef _GoogleFontFile = ({String family, String style, String weight, Uri url});
 
 Future<void> downloadFromGoogleFonts({
   required http.Client client,
   required Directory fontsDir,
-  required List<String> links,
+  required List<TypstFontEntry> typstFontEntries,
 }) async {
-  // Collect links to all the font files we need
-  final Set<_GoogleFontFile> fontFiles = {};
-  for (final String link in links) {
-    fontFiles.addAll(await _getFileLinksFromGoogleFontsLink(client, link));
-  }
+  // Categorise links with "font project" name
+  final Map<String, List<Uri>> nameAndLinks = typstFontEntries.toNameUrlsMap();
 
-  // Create new empty directories for each font family
-  final Set<String> fontFamilies = fontFiles.map((e) => e.family).toSet();
-  for (final String fontFamily in fontFamilies) {
-    await createEmptyFontDir(fontsDir, directoryName: fontFamily);
-  }
+  // For each "font project", download all the font files into its directory
+  for (final MapEntry<String, List<Uri>> entry in nameAndLinks.entries) {
+    final String projectName = entry.key;
+    final List<Uri> links = entry.value;
 
-  // Download all the font files into the family directory that was created above, with a nice filename
-  for (final fontFileDef in fontFiles) {
-    final Directory fontDir = Directory(p.join(fontsDir.path, fontFileDef.family));
-    final String filename = "${fontFileDef.family}_${fontFileDef.weight}_${fontFileDef.style}${p.extension(fontFileDef.url)}";
+    // Extract links to all the font files we need
+    final Set<_GoogleFontFile> fontFiles = {};
+    for (final Uri link in links) {
+      fontFiles.addAll(await _getFileLinksFromGoogleFontsLink(client, link));
+    }
 
-    await downloadFile(client, url: fontFileDef.url, destinationPath: p.join(fontDir.path, filename));
+    // Create a new empty directory for this "font project"
+    final Directory projectDir = await createEmptyFontDir(fontsDir, directoryName: projectName);
+
+    // Actually download all the font files for this "font project"
+    for (final fontFileDef in fontFiles) {
+      final Uri url = fontFileDef.url;
+      final String filename = "${fontFileDef.family} [${fontFileDef.weight} ${fontFileDef.style}]${p.extension(url.path)}";
+
+      await downloadFile(client, url: url, destinationPath: p.join(projectDir.path, filename));
+    }
   }
 }
 
@@ -38,10 +45,12 @@ final RegExp _styleExtractor = RegExp(r"font-style:\s*(.*);", caseSensitive: fal
 final RegExp _weightExtractor = RegExp(r"font-weight:\s*(.*);", caseSensitive: false);
 final RegExp _urlExtractor = RegExp(r"url\((.*?)\)", caseSensitive: false);
 
-Future<List<_GoogleFontFile>> _getFileLinksFromGoogleFontsLink(http.Client client, String link) async {
-  final Uri uri = Uri.parse(link);
-  final String cssContent = await client.read(uri);
-  final Iterable<String> fontFaceBlocks = cssContent.split("@font-face").where((str) => str.trim().isNotEmpty);
+Future<List<_GoogleFontFile>> _getFileLinksFromGoogleFontsLink(http.Client client, Uri url) async {
+  final String cssContent = await client.read(url);
+  final List<String> fontFaceBlocks = cssContent
+      .split(RegExp(r"(?:/\*.*\*/\s*)?@font-face\s*"))
+      .where((str) => str.trim().isNotEmpty)
+      .toList(growable: false);
 
   final List<_GoogleFontFile> results = [];
   for (final String fontFace in fontFaceBlocks) {
@@ -49,7 +58,8 @@ Future<List<_GoogleFontFile>> _getFileLinksFromGoogleFontsLink(http.Client clien
     final String style = _styleExtractor.firstMatch(fontFace)!.group(1)!;
     final String weight = _weightExtractor.firstMatch(fontFace)!.group(1)!;
     final String url = _urlExtractor.firstMatch(fontFace)!.group(1)!;
-    results.add((family: family, style: style, weight: weight, url: url));
+    final Uri uri = Uri.parse(url);
+    results.add((family: family, style: style, weight: weight, url: uri));
   }
 
   return results;

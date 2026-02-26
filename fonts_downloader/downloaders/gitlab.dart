@@ -3,17 +3,18 @@ import "dart:io";
 
 import "package:http/http.dart" as http;
 
+import "../input_parsing.dart";
 import "archive.dart";
 
 Future<void> downloadFromGitLab({
   required http.Client client,
   required Directory fontsDir,
-  required List<String> links,
+  required List<TypstFontEntry> typstFontEntries,
 }) async {
-  final Set<String> archiveLinks = {};
-  for (final String link in links) {
+  final List<TypstFontEntry> archiveEntries = [];
+  for (final TypstFontEntry typstFontEntry in typstFontEntries) {
     // Extract data from link
-    final Uri uri = Uri.parse(link);
+    final Uri uri = typstFontEntry.url;
     final String orgName = uri.pathSegments[0];
     final String projectName = uri.pathSegments[1];
 
@@ -31,11 +32,11 @@ Future<void> downloadFromGitLab({
     final _Source zipSource = gitlabRelease.assets.sources.firstWhere((element) => element.format == "tar.gz");
 
     // Record the archive link for later downloading ↓
-    archiveLinks.add(zipSource.url);
+    archiveEntries.add(typstFontEntry.copyWith(url: zipSource.url));
   }
 
   // This is later downloading ↑
-  await downloadArchivedFonts(client: client, fontsDir: fontsDir, links: archiveLinks);
+  await downloadArchivedFonts(client: client, fontsDir: fontsDir, typstFontEntries: archiveEntries);
 }
 
 // The API call's json is decoded into these data classes:
@@ -53,15 +54,15 @@ class _Assets {
   const _Assets(this.sources);
 
   factory _Assets.fromJson(Map<String, dynamic> json) => _Assets(
-    (json["sources"] as List<dynamic>).map((e) => _Source.fromJson(e as Map<String, dynamic>)).toList(),
+    (json["sources"] as List<dynamic>).map((e) => _Source.fromJson(e as Map<String, dynamic>)).toList(growable: false),
   );
 }
 
 class _Source {
   final String format;
-  final String url;
+  final Uri url;
 
-  const _Source(this.format, this.url);
+  _Source(this.format, String url) : url = Uri.parse(url);
 
   factory _Source.fromJson(Map<String, dynamic> json) => _Source(json["format"] as String, json["url"] as String);
 }

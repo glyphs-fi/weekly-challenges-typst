@@ -22,10 +22,9 @@ Future<Directory> createEmptyFontDir(Directory fontsDir, {required String direct
   return fontDir;
 }
 
-Future<void> downloadFile(http.Client client, {required String url, required String destinationPath}) async {
+Future<void> downloadFile(http.Client client, {required Uri url, required String destinationPath}) async {
   // Download content into memory
-  final Uri uri = Uri.parse(url);
-  final Uint8List bytes = await client.readBytes(uri);
+  final Uint8List bytes = await client.readBytes(url);
 
   // Save content to file
   final File fontFile = File(destinationPath);
