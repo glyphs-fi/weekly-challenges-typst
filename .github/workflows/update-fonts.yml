@@ -29,9 +29,9 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config core.quotepath off  # For rendering non-ASCII characters nicely in the upcoming git status
       - name: Show git changes
-        run: git status
+        run: git status >> $GITHUB_STEP_SUMMARY
       - name: Git commit and push
         run: |
-          [[ $(git diff-index HEAD --) ]] || { echo "No updates found. No push necessary."; exit 0; }
+          [[ $(git diff-index HEAD --) ]] || { echo "No updates found. No push necessary." >> $GITHUB_STEP_SUMMARY; exit 0; }
           git commit -am "Updated fonts"
           git push
