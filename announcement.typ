@@ -199,7 +199,7 @@
         dx: card-width / 2 - ga-icon-radius,
         dy: top-circle-radius - ga-icon-radius,
         image(
-          "GA_icon.pdf",
+          "GA_icon.svg",
           width: ga-icon-radius * 2,
         ),
       )
