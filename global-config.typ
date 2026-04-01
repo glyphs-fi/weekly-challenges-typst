@@ -260,6 +260,12 @@
       ), //tengwar
       "Fairfax HD", //bascially everything else in UCSUR, incl. sitelen pona, D'ni, Standard Galactic Alphabet, etc
     ),
+    "Latin",
+    //not actually ever selected, but the bot needs them for custom emotes
+    (
+      (name: "Noto Sans", src: "gfonts"),
+      (name: "Rubik", src: "gfonts"),
+    ),
   )
   fonts-info += final-insertions
 
@@ -292,7 +298,13 @@
 
 #let generate-gfonts-link = name => {
   let encoded = name.replace(" ", "+")
-  "https://fonts.googleapis.com/css2?family=" + encoded + ":ital,wght@0,400;0,700;1,700"
+  (
+    "https://fonts.googleapis.com/css2?family="
+      + encoded
+      + if name == "Noto Sans" { ":wght@900" } else if name == "Rubik" { ":wght@700" } else {
+        ":ital,wght@0,400;0,700;1,700"
+      }
+  )
 }
 
 #let generate-github-link = path => {
