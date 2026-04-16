@@ -10,7 +10,7 @@
   let img = image(path, width: image-width, height: image-height)
   let residual-height = 8cm - image-height
   helpers.spacing-block(image-width, residual-height / 2)
-  helpers.drop-shadowed-box(height: image-height, img, shadow-gradient-diameter: 2mm)
+  helpers.drop-shadowed-box(fill: palette.white, height: image-height, img, shadow-gradient-diameter: 2mm)
   helpers.spacing-block(image-width, residual-height / 2)
 }
 

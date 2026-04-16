@@ -230,8 +230,8 @@
     for (display-width, challenge) in ((16cm, "Glyph"), (18cm, "Ambi")) {
       for (winner-username, winner-nickname, pos) in (
         ("the_uwuji", "The Uwuji", 1),
-        ("nope", "nope", 2),
-        ("狗", "dog狗", 3),
+        ("狗", "dog狗", 2),
+        ("jelly", "TechnicallyJelly", 3),
       ) {
         (
           align(
