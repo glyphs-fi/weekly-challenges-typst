@@ -25,7 +25,7 @@
         style: "italic",
         weight: "bold",
         size: config.pangram-font-size,
-        global-config.pangrams * 3,
+        global-config.pangrams * 5,
       ),
     ),
   )
