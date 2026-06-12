@@ -196,6 +196,7 @@
             if (challenge == "Glyph") { showcase.glyph-showcase-config } else { showcase.ambi-showcase-config }
               + if challenge == "Glyph" { (primary-colour: glyph-primary) },
             "sample_images",
+            3,
           ),
         ),
       )
@@ -212,11 +213,13 @@
         18cm,
         showcase.glyph-suggestion-vote-config + (suggestion-list: test-glyph-suggestions),
         "",
+        5,
       ))),
       align(center, box(showcase.generate-image-grid(
         18cm,
         showcase.ambi-suggestion-vote-config + (suggestion-list: test-ambi-suggestions),
         "",
+        3,
       ))),
     ).join(helpers.spacing-block(20cm, 1cm)),
   )

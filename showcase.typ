@@ -8,7 +8,7 @@
 
 #let glyph-showcase-config = (
   showcase-width: 18cm,
-  num-cols: 3,
+  default-num-cols: 3,
   aspect-ratio: 1,
   is-short-date: false,
   title-text: "Weekly Glyph Challenge",
@@ -25,7 +25,7 @@
 )
 #let ambi-showcase-config = (
   showcase-width: 22cm,
-  num-cols: 3,
+  default-num-cols: 3,
   aspect-ratio: 1.5,
   is-short-date: false,
   title-text: "Weekly Ambigram Challenge",
@@ -40,7 +40,7 @@
 )
 #let glyph-suggestion-vote-config = (
   showcase-width: 20cm,
-  num-cols: 5,
+  default-num-cols: 5,
   aspect-ratio: 1,
   is-short-date: true,
   title-text: "Glyph Suggestion Vote!",
@@ -59,7 +59,7 @@
 )
 #let ambi-suggestion-vote-config = (
   showcase-width: 22cm,
-  num-cols: 3,
+  default-num-cols: 3,
   aspect-ratio: 2,
   is-short-date: true,
   title-text: "Ambigram Suggestion Vote!",
@@ -81,7 +81,7 @@
 
 
 //produces a grid of framed images together with their labels and a background rectangle
-#let generate-image-grid(grid-width, config, image-dir) = {
+#let generate-image-grid(grid-width, config, image-dir, num-cols) = {
   if "path-template" in config.keys() {
     let full-path-template = image-dir + "/" + config.path-template
     //somewhat hacky code for finding number of submissions, needs to live in its own context for reasons
@@ -95,7 +95,6 @@
       num-items = config.suggestion-list.len()
     }
     helpers.number-of-submissions-return.update(0)
-    let num-cols = config.num-cols
     let num-rows = helpers.ceil-division(num-items, num-cols)
 
     let label-square-length = 0.85cm
@@ -456,9 +455,14 @@
 
 
 //produces a full showcase complete with banner, image grid and background
-#let generate-showcase(badge-text-str, start-date, end-date, config, image-dir) = context {
+//`num-cols` defaults to the value in the supplied `config` if `none` is given
+#let generate-showcase(badge-text-str, start-date, end-date, config, image-dir, num-cols) = context {
   let rectangular-badge = config.rectangular-badge
   let showcase-width = config.showcase-width
+  let final-num-cols = num-cols
+  if final-num-cols == none {
+    final-num-cols = config.default-num-cols
+  }
 
   //horizontal space on each side of the image grid
   let side-margin = 1cm
@@ -471,6 +475,7 @@
     showcase-width - 2 * side-margin,
     config,
     image-dir,
+    final-num-cols,
   )
 
   //construct foreground (banner + image grid with spacing in between), storing for later
@@ -509,25 +514,25 @@
 
 
 //produces glyph showcase
-#let generate-glyph-showcase(glyph, weeknum, start-date, end-date, image-dir) = {
+#let generate-glyph-showcase(glyph, weeknum, start-date, end-date, image-dir, num-cols) = {
   let config = glyph-showcase-config
   config += (primary-colour: palette.this-week-fg(weeknum))
-  generate-showcase(glyph, start-date, end-date, config, image-dir)
+  generate-showcase(glyph, start-date, end-date, config, image-dir, num-cols)
 }
 
 //produces ambigram showcase
-#let generate-ambi-showcase(ambi, start-date, end-date, image-dir) = {
-  generate-showcase(ambi, start-date, end-date, ambi-showcase-config, image-dir)
+#let generate-ambi-showcase(ambi, start-date, end-date, image-dir, num-cols) = {
+  generate-showcase(ambi, start-date, end-date, ambi-showcase-config, image-dir, num-cols)
 }
 
-#let generate-glyph-suggestion-vote(date, suggestion-list) = {
+#let generate-glyph-suggestion-vote(date, suggestion-list, num-cols) = {
   let config = glyph-suggestion-vote-config
   config += (suggestion-list: suggestion-list)
-  generate-showcase("?", date, date, config, "")
+  generate-showcase("?", date, date, config, "", num-cols)
 }
 
-#let generate-ambi-suggestion-vote(date, suggestion-list) = {
+#let generate-ambi-suggestion-vote(date, suggestion-list, num-cols) = {
   let config = ambi-suggestion-vote-config
   config += (suggestion-list: suggestion-list)
-  generate-showcase("?", date, date, config, "")
+  generate-showcase("?", date, date, config, "", num-cols)
 }

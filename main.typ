@@ -83,6 +83,10 @@
 #let showcase-end-date = showcase-start-date + duration(days: 7)
 //#let announcement-start-date = datetime(year: 2069, month: 4, day: 20)
 
+//showcase number of columns. `none` causes fallback to a default value
+#let glyph-showcase-num-cols = none
+#let ambi-showcase-num-cols = none
+
 //winner display names
 #let glyph-winner-first-nickname = glyph-winner-first-username
 #let glyph-winner-second-nickname = glyph-winner-second-username
@@ -118,7 +122,7 @@
 //oh god the copypaste
 //the strings specify the names you need to pass on the command line, but they're just the same as the variable names
 #let to-generate = cmd-line-override("to-generate", to-generate, fn: x => x.split(" "))
-#let current-week = cmd-line-override("current-week", current-week, fn: eval)
+#let current-week = cmd-line-override("current-week", current-week, fn: int)
 #let announcement-start-date = cmd-line-override("announcement-start-date", announcement-start-date, fn: parse-date)
 #let announcement-end-date = cmd-line-override(
   "announcement-end-date",
@@ -161,6 +165,9 @@
 #let ambi-winner-third-username = cmd-line-override("ambi-winner-third-username", ambi-winner-third-username)
 #let ambi-winner-third-nickname = cmd-line-override("ambi-winner-third-nickname", ambi-winner-third-nickname)
 
+#let glyph-showcase-num-cols = cmd-line-override("glyph-showcase-num-cols", glyph-showcase-num-cols, fn: int)
+#let ambi-showcase-num-cols = cmd-line-override("ambi-showcase-num-cols", ambi-showcase-num-cols, fn: int)
+
 
 //if "winners" is specified, generate all three subtypes
 #let pos = none
@@ -195,6 +202,7 @@
         showcase-start-date,
         showcase-end-date,
         image-dir,
+        glyph-showcase-num-cols,
       )
     } else if type == "glyph-first" {
       hall-of-fame.generate-glyph-winner-display(
@@ -223,7 +231,13 @@
     } else if type == "ambigram-announcement" {
       announcement.generate-ambi-announcement(announcement-ambi, announcement-start-date, announcement-end-date)
     } else if type == "ambigram-showcase" {
-      showcase.generate-ambi-showcase(showcase-ambi, showcase-start-date, showcase-end-date, image-dir)
+      showcase.generate-ambi-showcase(
+        showcase-ambi,
+        showcase-start-date,
+        showcase-end-date,
+        image-dir,
+        ambi-showcase-num-cols,
+      )
     } else if type == "ambigram-first" {
       hall-of-fame.generate-ambi-winner-display(
         current-week - 2,
